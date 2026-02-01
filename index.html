@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>wordig</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -34,9 +34,22 @@
       .cloud-flow-2 { animation: cloud-flow 120s linear infinite; animation-delay: -30s; }
       .cloud-flow-3 { animation: cloud-flow 100s linear infinite; animation-delay: -60s; }
       .shadow-1 { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+      /* スマホ・ノッチ対応: safe-area-inset */
+      .pb-safe { padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px)); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+      .pl-safe { padding-left: env(safe-area-inset-left, 0px); }
+      .pr-safe { padding-right: env(safe-area-inset-right, 0px); }
+      .bottom-safe { bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem)); }
+      .left-safe { left: max(1.5rem, env(safe-area-inset-left, 1.5rem)); }
+      .right-safe { right: max(1.5rem, env(safe-area-inset-right, 1.5rem)); }
+      /* スクロール・オーバースクロール時も白いブラウザ背景を見せない */
+      html, body {
+        min-height: 100%;
+        background: #E5EEC8; /* グラデーション末尾の色と揃える */
+      }
     </style>
   </head>
-  <body>
+  <body class="min-h-screen overflow-x-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
