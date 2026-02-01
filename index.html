@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>wordig</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* UI カラーパレット（COLORS.md / src/theme/colors.js と同期） */
+      :root {
+        /* ブラック系 */
+        --black-light: #939393;
+        --black-mid: #666666;
+        --black-dark: #444444;
+        /* ブルー系 */
+        --blue-50: #E8F5FF;
+        --blue-100: #D4EDFF;
+        --blue-200: #B4D7EF;
+        --blue-300: #7DBAE5;
+        --blue-400: #639CC4;
+        --blue-500: #3986BB;
+        --blue-500-30: rgba(57, 134, 187, 0.3);
+        --blue-600: #2A5E83;
+        --blue-700: #134E78;
+        /* ホワイト系 */
+        --white: #FFFFFF;
+        --white-off: #E3E3E3;
+      }
+      @keyframes cloud-flow {
+        from { transform: translateX(100vw); }
+        to { transform: translateX(-100%); }
+      }
+      .cloud-flow { animation: cloud-flow 90s linear infinite; }
+      .cloud-flow-2 { animation: cloud-flow 120s linear infinite; animation-delay: -30s; }
+      .cloud-flow-3 { animation: cloud-flow 100s linear infinite; animation-delay: -60s; }
+      .shadow-1 { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
