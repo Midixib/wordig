@@ -9,7 +9,9 @@ import { ChevronLeft, Upload, Users, User, RefreshCcw, CheckCircle, MessageCircl
 // =============================================================================
 
 // --- 設定 ---
-const API_KEY = 'AIzaSyB1QJebcs1SqHVsDbNB7bvocBCdJrGS05Y';
+// 環境変数 VITE_GEMINI_API_KEY を使用（.env に記載し、.env は .gitignore に追加すること）
+// 注意: フロントのみのデプロイではキーはブラウザに含まれるため、本番ではバックエンド経由での呼び出しを推奨
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 // Gemini 3 Flash（300ドルクレジット適用中）
 const GEMINI_MODEL = 'gemini-3-flash-preview';
 
