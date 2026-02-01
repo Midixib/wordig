@@ -399,8 +399,11 @@ const analyzeTimelineWithGemini = async (chatTextData, participantNames) => {
   const textForAnalysis = chatTextData.substring(0, 30000);
   const namesList = participantNames.join('、');
 
+  const participantCount = participantNames.length;
+  const maxQuotes = Math.min(participantCount, 5); // 登場人物数分、最大5つまで
+
   const prompt = `あなたは優秀な人間関係分析AIです。
-以下のLINEチャットのテキストデータを分析し、登場人物2人（主に会話の中心となる2人）の関係性の変化を年別に整理してください。
+以下のLINEチャットのテキストデータを分析し、登場人物全員の関係性の変化を年別に整理してください。
 データは2年以上の期間が含まれている必要があります。西暦（年）ごとの変化を抽出してください。
 
 【チャットデータ】
@@ -408,12 +411,16 @@ ${textForAnalysis}
 
 【登場人物】
 ${namesList}
+（全${participantCount}人）
 
 【分析の指示】
 1. チャットに含まれる西暦（年）を特定し、各年ごとに関係性を分析する。
 2. 会話の量、言葉遣い（敬語⇔タメ口）、親しみやすさ、共通の話題、心理的距離感などから、各年の親密度を0〜100の数値で推定する。
-3. 各年について、二人の関係性を象徴するキャッチコピーを1つ作成する（30字程度）。
-4. 各年について、実際の会話を2文引用する。引用は「名前「発言内容」」の形式で、その年に実際に交わされた発言から選ぶ。
+3. 各年について、登場人物全体の関係性を象徴するキャッチコピーを1つ作成する（30字程度）。
+4. 各年について、実際の会話を引用する。引用は「名前「発言内容」」の形式で、その年に実際に交わされた発言から選ぶ。
+   - 登場人物が2人の場合は2文引用する。
+   - 登場人物が3人以上の場合は、各人物が均等に表れるように${maxQuotes}文引用する（最大5文まで）。
+   - 各年の引用では、できるだけ多くの異なる人物のセリフを含めること。
 5. 各引用につき、なぜそのような関係性だと判断したかの理由を50字以内で1つずつ記述する。
 
 【出力形式】JSONのみ。Markdownのコードブロックは不要。
@@ -437,6 +444,7 @@ ${namesList}
 - yearsとintimacyScoresの要素数は同じにすること。yearlyDataの要素数も同じこと。
 - 最低2年分、最大5年分のデータを出力すること。
 - quoteは実際のチャットから引用すること。登場人物の名前は【登場人物】のいずれかを使用すること。
+- 登場人物が3人以上の場合は、各年の引用でできるだけ多くの異なる人物のセリフを含め、人物が均等に表れるようにすること。
 - reasonは各引用に対して50字以内で必ず記述すること。`;
 
   try {
@@ -481,7 +489,7 @@ ${namesList}
     const normalized = yearlyData.slice(0, 5).map((item) => ({
       year: Number(item.year) || new Date().getFullYear(),
       catchphrase: String(item.catchphrase || '').slice(0, 50),
-      quotes: (item.quotes || []).slice(0, 2).map((q) => ({
+      quotes: (item.quotes || []).slice(0, maxQuotes).map((q) => ({
         quote: String(q.quote || '').slice(0, 150),
         reason: String(q.reason || '').slice(0, 50),
       })).filter((q) => q.quote && q.reason),
