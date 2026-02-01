@@ -618,7 +618,7 @@ const BackButton = ({ screen, goBack }) => {
       style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', left: 'max(1rem, env(safe-area-inset-left))' }}
       aria-label="戻る"
     >
-      <img src={BACK_ICON_SRC} alt="" className="w-7 h-7 sm:w-full sm:h-full object-contain" />
+      <img src={BACK_ICON_SRC} alt="" className="w-full h-full object-contain" />
     </button>
   );
 };
@@ -1629,7 +1629,7 @@ const InputScreen = ({ participants, setParticipants, startAnalysis, canGoNext }
                     setParticipants(newP);
                   }}
                   placeholder={p.placeholder}
-                  className={`flex-1 h-[30px] px-4 rounded-[15px] bg-[#D4EDFF] border-0 outline-none placeholder-gray-500 text-sm ${
+                  className={`flex-1 h-[30px] px-4 rounded-[15px] ${p.name ? 'bg-[#E8F5FF]' : 'bg-white'} border-0 outline-none placeholder-gray-500 text-sm ${
                     p.name ? 'font-semibold text-[#2A5E83]' : 'text-gray-800'
                   }`}
                 />
