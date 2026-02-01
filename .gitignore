@@ -1,0 +1,23 @@
+# 依存関係
+node_modules/
+
+# ビルド出力
+dist/
+build/
+
+# 環境変数（APIキーなどが含まれるため必ず含める）
+.env
+.env.local
+.env.*.local
+
+# ログ・キャッシュ
+*.log
+npm-debug.log*
+.cache
+
+# エディタ
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
