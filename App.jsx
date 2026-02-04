@@ -1663,7 +1663,7 @@ const InputScreen = ({ participants, setParticipants, startAnalysis, canGoNext }
                   />
                   <input
                     type="file"
-                    accept=".txt"
+                    accept="text/plain,.txt"
                     className="hidden"
                     onChange={(e) => handleFileChange(e, idx)}
                   />
@@ -1805,7 +1805,7 @@ const TorisetsuInputScreen = ({
                 />
                 <input
                   type="file"
-                  accept=".txt"
+                  accept="text/plain,.txt"
                   className="hidden"
                   onChange={handleFileChange}
                 />
@@ -2016,7 +2016,7 @@ const ArchiveInputScreen = ({
                   alt={chatFileName ? 'データを変更' : 'データを追加'}
                   className="h-[30px] w-auto"
                 />
-                <input type="file" accept=".txt" className="hidden" onChange={handleFileChange} />
+                <input type="file" accept="text/plain,.txt" className="hidden" onChange={handleFileChange} />
               </label>
               <div className={`flex-1 min-w-0 min-h-[30px] px-4 sm:px-[28px] rounded-[15px] flex items-center justify-center gap-2 overflow-hidden`}>
                 <FileText size={16} className={chatFileName ? 'text-[#2A5E83]' : 'text-gray-400'} shrink-0 />
@@ -2206,7 +2206,7 @@ const TimelineInputScreen = ({
                   alt={chatFileName ? 'データを変更' : 'データを追加'}
                   className="h-[30px] w-auto"
                 />
-                <input type="file" accept=".txt" className="hidden" onChange={handleFileChange} />
+                <input type="file" accept="text/plain,.txt" className="hidden" onChange={handleFileChange} />
               </label>
               <div className={`flex-1 min-w-0 min-h-[30px] px-4 sm:px-[28px] rounded-[15px] flex items-center justify-center gap-2 overflow-hidden`}>
                 <FileText size={16} className={chatFileName ? 'text-[#2A5E83]' : 'text-gray-400'} shrink-0 />
@@ -2962,7 +2962,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
           </div>
 
           {/* ページネーション */}
-          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center">
+          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center mb-[max(5rem,calc(4rem+env(safe-area-inset-bottom)))]">
             <button
               disabled={resultPage === 1}
               onClick={() => setResultPage(p => p - 1)}
@@ -3146,7 +3146,7 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
             </section>
           </div>
 
-          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center">
+          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center mb-[max(5rem,calc(4rem+env(safe-area-inset-bottom)))]">
             <button
               disabled={resultPage === 1}
               onClick={() => setResultPage(p => p - 1)}
@@ -3257,7 +3257,7 @@ const FutureInputScreen = ({
                   alt={chatFileName ? 'データを変更' : 'データを追加'}
                   className="h-[30px] w-auto"
                 />
-                <input type="file" accept=".txt" className="hidden" onChange={handleFileChange} />
+                <input type="file" accept="text/plain,.txt" className="hidden" onChange={handleFileChange} />
               </label>
               <div className={`flex-1 min-w-0 min-h-[30px] px-4 sm:px-[28px] rounded-[15px] flex items-center justify-center gap-2 overflow-hidden`}>
                 <FileText size={16} className={chatFileName ? 'text-[#2A5E83]' : 'text-gray-400'} shrink-0 />
