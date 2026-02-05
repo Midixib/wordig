@@ -1167,7 +1167,7 @@ const HistoryListScreen = ({ history, setScreen, setSelectedHistory }) => {
           >
             {/* 左: アイコン */}
             <div className="w-[36%] min-w-[70px] max-w-[120px] sm:w-[45%] sm:max-w-[160px] shrink-0 flex items-center justify-center">
-              <div className="aspect-square w-full max-h-[100px] sm:max-h-[130px] rounded-[16px] sm:rounded-[20px] flex items-center justify-center overflow-hidden bg-white/30">
+              <div className="aspect-square w-full max-h-[100px] sm:max-h-[130px] rounded-[16px] sm:rounded-[20px] flex items-center justify-center overflow-hidden">
                 <img src={item.toolIcon} alt="" className="w-full h-full object-contain" />
               </div>
             </div>
@@ -1216,7 +1216,7 @@ const HistoryDetailScreen = ({ selectedHistory, setScreen, history, setHistory }
       
       <div className="bg-white/20 backdrop-blur-md p-5 sm:p-8 rounded-[32px] sm:rounded-[40px] shadow-xl max-w-md w-full relative m-4 sm:m-6">
         <div className="flex justify-center mb-6">
-          <div className="rounded-3xl flex items-center justify-center overflow-hidden bg-white/30">
+          <div className="rounded-3xl flex items-center justify-center overflow-hidden">
             <img src={selectedHistory.toolIcon} alt="" className="w-32 h-32 object-contain" />
           </div>
         </div>
