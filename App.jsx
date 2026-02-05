@@ -647,9 +647,9 @@ const HomeTab = ({ activeTab, setActiveTab, setScreen }) => {
         left: 'max(0px, calc((100vw - min(100vw, 512px)) / 2 + env(safe-area-inset-left)))'
       }}
     >
-      <div className="relative h-12 sm:h-[60px] flex items-center justify-center home-tab-width-sm">
-        <div className="w-full h-full relative">
-          <img src={HOMETAB_SRC} alt="" className="w-full h-full object-contain pointer-events-none" />
+      <div className="relative h-[60px] flex items-center justify-center home-tab-width-sm">
+        <div className="w-full h-[60px] relative flex items-center justify-center">
+          <img src={HOMETAB_SRC} alt="" className="h-[60px] w-auto pointer-events-none" />
           {/* 分析ツールタブ（左側） */}
           <button
             onClick={() => {
@@ -680,7 +680,7 @@ const RuleButton = ({ screen, onOpenRule }) => {
   return (
     <button
       onClick={onOpenRule}
-      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation"
+      className="fixed z-50 w-[60px] h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation"
       style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', right: 'max(1rem, env(safe-area-inset-right))' }}
       aria-label="ルールを確認"
     >
@@ -1040,7 +1040,7 @@ const OnboardingScreen1 = ({ setScreen, goBack }) => (
       {/* フキダシ */}
       <div className="relative w-full max-w-[320px] sm:max-w-[360px] mb-6 sm:mb-8">
         <div className="bg-white/95 rounded-[28px] px-5 py-3 shadow-lg border border-[var(--blue-500)]/20">
-          <p className="text-sm sm:text-base font-bold text-[var(--black-dark)] text-center leading-relaxed">
+          <p className="text-[13px] font-normal text-[#666666] text-center leading-relaxed">
             このサービス「Wordig（ワーディグ）」ではLINEのチャットのデータから、その人らしさをふわっと引き出します！
           </p>
         </div>
@@ -1426,7 +1426,7 @@ const DetailsScreen = ({ selectedTool, setScreen }) => {
 
             <button 
               onClick={() => setScreen('input')}
-              className="w-full h-14 min-h-[56px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
+              className="w-full h-[60px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
             >
               <Users size={20} />
               <span>みんなでプレイ</span>
@@ -1507,7 +1507,7 @@ const DetailsScreen = ({ selectedTool, setScreen }) => {
 
             <button 
               onClick={() => setScreen('input')}
-              className="w-full h-14 min-h-[56px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
+              className="w-full h-[60px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
             >
               <User size={20} />
               <span>一人でプレイ</span>
@@ -1644,7 +1644,7 @@ const DetailsScreen = ({ selectedTool, setScreen }) => {
 
             <button
               onClick={() => setScreen('input')}
-              className="w-full h-14 min-h-[56px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
+              className="w-full h-[60px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
             >
               <User size={20} />
               <span>一人でプレイ</span>
@@ -1660,7 +1660,7 @@ const DetailsScreen = ({ selectedTool, setScreen }) => {
 
             <button
               onClick={() => setScreen('input')}
-              className="w-full h-14 min-h-[56px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
+              className="w-full h-[60px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
             >
               <User size={20} />
               <span>一人でプレイ</span>
@@ -1782,7 +1782,7 @@ const DetailsScreen = ({ selectedTool, setScreen }) => {
 
             <button
               onClick={() => setScreen('input')}
-              className="w-full h-14 min-h-[56px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
+              className="w-full h-[60px] bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center gap-2 transition-all active:scale-95"
             >
               <User size={20} />
               <span>一人でプレイ</span>
@@ -2089,7 +2089,7 @@ const InputScreen = ({ participants, setParticipants, startAnalysis, canGoNext }
         <button 
           disabled={!canGoNext}
           onClick={startAnalysis}
-          className={`h-14 min-h-[56px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
+          className={`h-[60px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
             canGoNext 
               ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' 
               : 'bg-gray-300 cursor-not-allowed'
@@ -2312,7 +2312,7 @@ const TorisetsuInputScreen = ({
         <button 
           disabled={!canGoNextTorisetsu}
           onClick={() => startTorisetsuAnalysis(chatTextData, detectedParticipants)}
-          className={`h-14 min-h-[56px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
+          className={`h-[60px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
             canGoNextTorisetsu
               ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' 
               : 'bg-gray-300 cursor-not-allowed'
@@ -2504,7 +2504,7 @@ const ArchiveInputScreen = ({
         <button
           disabled={!canGoNextArchive}
           onClick={onStartArchive}
-          className={`h-14 min-h-[56px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
+          className={`h-[60px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
             canGoNextArchive ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
@@ -2694,7 +2694,7 @@ const TimelineInputScreen = ({
         <button
           disabled={!canGoNextTimeline}
           onClick={onStartTimeline}
-          className={`h-14 min-h-[56px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
+          className={`h-[60px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
             canGoNextTimeline ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
@@ -3254,7 +3254,7 @@ const ResultsScreen = ({ resultPage, setResultPage, respondentOrder, handleReloa
           <div className="mt-5 text-center w-full max-w-md">
             <button
               onClick={handleReload}
-              className="group bg-[var(--blue-500)] hover:opacity-90 text-white font-bold h-14 min-h-[56px] px-8 rounded-full transition-all active:scale-95 flex items-center justify-center gap-2 mx-auto"
+              className="group bg-[var(--blue-500)] hover:opacity-90 text-white font-bold h-[60px] px-8 rounded-full transition-all active:scale-95 flex items-center justify-center gap-2 mx-auto"
             >
               <RefreshCcw size={20} className="group-hover:rotate-180 transition-transform duration-500" />
               おかわり！
@@ -3745,7 +3745,7 @@ const FutureInputScreen = ({
         <button
           disabled={!canGoNextFuture}
           onClick={onStartFuture}
-          className={`h-14 min-h-[56px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
+          className={`h-[60px] px-8 rounded-full font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation ${
             canGoNextFuture ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
