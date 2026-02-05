@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, Upload, Users, User, RefreshCcw, CheckCircle, MessageCircle, FileText, Lock, Info, Cloud, Clock, Loader2, Plus, Home } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Upload, Users, User, RefreshCcw, CheckCircle, MessageCircle, FileText, Lock, Info, Cloud, Clock, Loader2, Plus, Home } from 'lucide-react';
 
 // =============================================================================
 // 画面フローについて:
@@ -618,12 +618,12 @@ ${textForAnalysis}
 const BACK_ICON_SRC = `${import.meta.env.BASE_URL}icon-back.svg`;
 
 const BackButton = ({ screen, goBack }) => {
-  if (screen === 'intro' || screen === 'selection') return null;
+  if (screen === 'intro' || screen === 'selection' || screen === 'onboarding1' || screen === 'onboarding2' || screen === 'historyList' || screen === 'historyDetail') return null;
   return (
     <button
       onClick={goBack}
-      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation"
-      style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', left: 'max(1rem, env(safe-area-inset-left))' }}
+      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+      style={{ top: 'max(1rem, env(safe-area-inset-top))', left: 'max(1rem, env(safe-area-inset-left))' }}
       aria-label="戻る"
     >
       <img src={BACK_ICON_SRC} alt="" className="w-full h-full object-contain" />
@@ -633,6 +633,46 @@ const BackButton = ({ screen, goBack }) => {
 
 // 右下固定のルールボタン（ツール詳細画面以降で表示）
 const RULE_BUTTON_SRC = `${import.meta.env.BASE_URL}button_rule.png`;
+const HOMETAB_SRC = `${import.meta.env.BASE_URL}hometab.svg`;
+
+// ホームタブ（ホーム画面の下に表示・分析ツールと分析履歴の2つのタブ）
+const HomeTab = ({ activeTab, setActiveTab, setScreen }) => {
+  if (activeTab === undefined) return null; // activeTabが未定義の場合は表示しない
+  
+  return (
+    <div 
+      className="fixed bottom-0 z-40" 
+      style={{ 
+        bottom: 'max(1rem, env(safe-area-inset-bottom))', 
+        left: 'max(0px, calc((100vw - min(100vw, 512px)) / 2 + env(safe-area-inset-left)))'
+      }}
+    >
+      <div className="relative h-12 sm:h-[60px] flex items-center justify-center home-tab-width-sm">
+        <div className="w-full h-full relative">
+          <img src={HOMETAB_SRC} alt="" className="w-full h-full object-contain pointer-events-none" />
+          {/* 分析ツールタブ（左側） */}
+          <button
+            onClick={() => {
+              setActiveTab('tools');
+              setScreen('selection');
+            }}
+            className="absolute left-0 top-0 w-1/2 h-full flex items-center justify-center cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+            aria-label="分析ツール"
+          />
+          {/* 分析履歴タブ（右側） */}
+          <button
+            onClick={() => {
+              setActiveTab('history');
+              setScreen('historyList');
+            }}
+            className="absolute right-0 top-0 w-1/2 h-full flex items-center justify-center cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+            aria-label="分析履歴"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const RuleButton = ({ screen, onOpenRule }) => {
   const show = screen === 'details' || screen === 'input' || screen === 'analyzing' || screen === 'results' || screen === 'torisetsuResults' || screen === 'archiveAnalyzing' || screen === 'archiveResults' || screen === 'timelineAnalyzing' || screen === 'timelineResults' || screen === 'futureAnalyzing' || screen === 'futureResults';
@@ -949,7 +989,7 @@ const INTRO_GIF_SRC = `${import.meta.env.BASE_URL}intro.gif`;
 const INTRO_BUTTON_SRC = `${import.meta.env.BASE_URL}button-hazimeru.svg`;
 
 const IntroScreen = ({ setScreen }) => (
-  <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 bg-transparent">
+  <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 bg-transparent animate-fade-in">
     <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md bg-transparent">
       <img
         src={INTRO_LOGO_SRC}
@@ -959,11 +999,11 @@ const IntroScreen = ({ setScreen }) => (
       <img
         src={INTRO_GIF_SRC}
         alt="くもぐら"
-        className="w-full max-h-[35vh] sm:max-h-[40vh] object-contain bg-transparent"
+        className="w-full max-h-[35vh] sm:max-h-[40vh] object-contain bg-transparent transition-all duration-500 ease-in-out"
       />
       <button
         type="button"
-        onClick={() => setScreen('selection')}
+        onClick={() => setScreen('onboarding1')}
         className="mt-6 sm:mt-8 w-full max-w-[180px] sm:max-w-[198px] hover:opacity-90 active:scale-95 transition-all focus:outline-none touch-manipulation"
         aria-label="はじめる"
       >
@@ -973,12 +1013,362 @@ const IntroScreen = ({ setScreen }) => (
   </div>
 );
 
+// オンボーディング画面1（くもぐら + フキダシ + 1つ目のメッセージ）
+const OnboardingScreen1 = ({ setScreen, goBack }) => (
+  <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 bg-transparent relative animate-fade-in">
+    {/* 戻るボタン */}
+    <button
+      onClick={goBack}
+      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+      style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', left: 'max(1rem, env(safe-area-inset-left))' }}
+      aria-label="戻る"
+    >
+      <img src={BACK_ICON_SRC} alt="" className="w-full h-full object-contain" />
+    </button>
+    
+    {/* ページ表記 */}
+    <div className="fixed top-4 sm:top-6 right-4 sm:right-6 z-10">
+      <span className="text-sm sm:text-base text-gray-600 font-medium">1 / 2</span>
+    </div>
+
+    <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md bg-transparent">
+      <img
+        src={INTRO_GIF_SRC}
+        alt="くもぐら"
+        className="w-full max-h-[35vh] sm:max-h-[40vh] object-contain bg-transparent mb-4 sm:mb-6 transition-all duration-500 ease-in-out"
+      />
+      {/* フキダシ */}
+      <div className="relative w-full max-w-[320px] sm:max-w-[360px] mb-6 sm:mb-8">
+        <div className="bg-white/95 rounded-[28px] px-5 py-3 shadow-lg border border-[var(--blue-500)]/20">
+          <p className="text-sm sm:text-base font-bold text-[var(--black-dark)] text-center leading-relaxed">
+            このサービス「Wordig（ワーディグ）」ではLINEのチャットのデータから、その人らしさをふわっと引き出します！
+          </p>
+        </div>
+        {/* フキダシのしっぽ（上向き） */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 w-0 h-0 border-b-[10px] border-b-white/95 border-x-[10px] border-x-transparent"
+          style={{
+            bottom: '100%',
+            transform: 'translate(-50%, 6px)',
+          }}
+          aria-hidden
+        />
+      </div>
+      {/* なるほどボタン */}
+      <button
+        type="button"
+        onClick={() => setScreen('onboarding2')}
+        className="w-full max-w-[180px] sm:max-w-[198px] h-12 sm:h-14 bg-[var(--blue-500)] hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center transition-all active:scale-95 focus:outline-none touch-manipulation text-base sm:text-lg"
+        aria-label="なるほど"
+      >
+        なるほど
+      </button>
+    </div>
+  </div>
+);
+
+// オンボーディング画面2（くもぐら + フキダシ + 2つ目のメッセージ）
+const OnboardingScreen2 = ({ setScreen, goBack }) => (
+  <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 bg-transparent relative">
+    {/* 戻るボタン */}
+    <button
+      onClick={goBack}
+      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+      style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', left: 'max(1rem, env(safe-area-inset-left))' }}
+      aria-label="戻る"
+    >
+      <img src={BACK_ICON_SRC} alt="" className="w-full h-full object-contain" />
+    </button>
+    
+    {/* ページ表記 */}
+    <div className="fixed top-4 sm:top-6 right-4 sm:right-6 z-10">
+      <span className="text-sm sm:text-base text-gray-600 font-medium">2 / 2</span>
+    </div>
+
+    <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md bg-transparent">
+      <img
+        src={INTRO_GIF_SRC}
+        alt="くもぐら"
+        className="w-full max-h-[35vh] sm:max-h-[40vh] object-contain bg-transparent mb-4 sm:mb-6 transition-all duration-500 ease-in-out"
+      />
+      {/* フキダシ */}
+      <div className="relative w-full max-w-[320px] sm:max-w-[360px] mb-6 sm:mb-8">
+        <div className="bg-white/95 rounded-[28px] px-5 py-3 shadow-lg border border-[var(--blue-500)]/20">
+          <p className="text-sm sm:text-base font-bold text-[var(--black-dark)] text-center leading-relaxed">
+            ぼく、「くもぐら」が社員さん同士がお互いを知り、いいチームになれるように精一杯サポートしますね！
+          </p>
+        </div>
+        {/* フキダシのしっぽ（上向き） */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 w-0 h-0 border-b-[10px] border-b-white/95 border-x-[10px] border-x-transparent"
+          style={{
+            bottom: '100%',
+            transform: 'translate(-50%, 6px)',
+          }}
+          aria-hidden
+        />
+      </div>
+      {/* はじめるボタン */}
+      <button
+        type="button"
+        onClick={() => setScreen('selection')}
+        className="w-full max-w-[180px] sm:max-w-[198px] hover:opacity-90 active:scale-95 transition-all focus:outline-none touch-manipulation"
+        aria-label="はじめる"
+      >
+        <img src={INTRO_BUTTON_SRC} alt="はじめる" className="w-full h-auto object-contain" />
+      </button>
+    </div>
+  </div>
+);
+
+// 履歴データの型定義
+const getHistoryFromStorage = () => {
+  try {
+    const stored = localStorage.getItem('wordig_history');
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const saveHistoryToStorage = (history) => {
+  try {
+    localStorage.setItem('wordig_history', JSON.stringify(history));
+  } catch (e) {
+    console.error('履歴の保存に失敗しました:', e);
+  }
+};
+
+// 履歴リストページ
+const HistoryListScreen = ({ history, setScreen, setSelectedHistory }) => {
+  if (history.length === 0) {
+    return (
+      <div className="flex flex-col min-h-screen w-full max-w-lg mx-auto">
+        <h2 className="text-base sm:text-lg font-bold text-gray-700 py-3 px-4 sm:py-4 text-center shrink-0">分析履歴</h2>
+        <div className="flex-1 overflow-y-auto px-3 sm:px-4 pb-32 pb-safe flex items-center justify-center">
+          <p className="text-gray-500 text-sm text-center">まだ分析履歴がありません<br />分析を実行すると、ここに履歴が表示されます</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen w-full max-w-lg mx-auto">
+      <h2 className="text-base sm:text-lg font-bold text-gray-700 py-3 px-4 sm:py-4 text-center shrink-0">分析履歴</h2>
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 pb-32 pb-safe space-y-2 sm:space-y-3">
+        {history.map((item, index) => (
+          <div
+            key={item.id || index}
+            onClick={() => {
+              setSelectedHistory(item);
+              setScreen('historyDetail');
+            }}
+            className="flex items-stretch gap-3 sm:gap-4 bg-white/20 backdrop-blur-sm rounded-[24px] sm:rounded-[30px] shadow-1 p-3 sm:p-4 min-h-[80px] sm:min-h-[100px] cursor-pointer hover:opacity-95 active:scale-[0.99] transition-all touch-manipulation"
+          >
+            {/* 左: アイコン */}
+            <div className="w-[36%] min-w-[70px] max-w-[120px] sm:w-[45%] sm:max-w-[160px] shrink-0 flex items-center justify-center">
+              <div className="aspect-square w-full max-h-[100px] sm:max-h-[130px] rounded-[16px] sm:rounded-[20px] flex items-center justify-center overflow-hidden bg-white/30">
+                <img src={item.toolIcon} alt="" className="w-full h-full object-contain" />
+              </div>
+            </div>
+            {/* 右: タイトル + 日時 + 説明 */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5 sm:py-1 gap-1 sm:gap-1.5">
+              <h3 className="font-bold text-[#134E78] text-sm sm:text-base leading-tight line-clamp-2">{item.toolName}</h3>
+              <p className="text-[10px] sm:text-xs text-[var(--black-mid)]">{item.date}</p>
+              {item.participants && (
+                <p className="text-[11px] sm:text-xs text-[var(--black-mid)] leading-relaxed line-clamp-1">
+                  参加者: {item.participants.join(', ')}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// 履歴詳細ページ
+const HistoryDetailScreen = ({ selectedHistory, setScreen, history, setHistory }) => {
+  const handleDelete = () => {
+    if (confirm('この履歴を削除しますか？')) {
+      const newHistory = history.filter(item => item.id !== selectedHistory.id);
+      setHistory(newHistory);
+      saveHistoryToStorage(newHistory);
+      setScreen('historyList');
+    }
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen w-full max-w-lg mx-auto pb-24 pb-safe relative">
+      {/* 戻るボタン */}
+      <button
+        onClick={() => {
+          setScreen('historyList');
+          setSelectedHistory(null);
+        }}
+        className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+        style={{ top: 'max(1rem, env(safe-area-inset-top))', left: 'max(1rem, env(safe-area-inset-left))' }}
+        aria-label="戻る"
+      >
+        <img src={BACK_ICON_SRC} alt="" className="w-full h-full object-contain" />
+      </button>
+      
+      <div className="bg-white/20 backdrop-blur-md p-5 sm:p-8 rounded-[32px] sm:rounded-[40px] shadow-xl max-w-md w-full relative m-4 sm:m-6">
+        <div className="flex justify-center mb-6">
+          <div className="rounded-3xl flex items-center justify-center overflow-hidden bg-white/30">
+            <img src={selectedHistory.toolIcon} alt="" className="w-32 h-32 object-contain" />
+          </div>
+        </div>
+        <h2 className="text-2xl font-bold text-center text-[#134E78] mb-4">{selectedHistory.toolName}</h2>
+        <div className="text-sm text-gray-600 text-center mb-6">
+          <p>{selectedHistory.date}</p>
+          {selectedHistory.participants && (
+            <p className="mt-2">参加者: {selectedHistory.participants.join(', ')}</p>
+          )}
+        </div>
+        
+        {/* 結果データの表示 */}
+        <div className="space-y-4">
+          {selectedHistory.toolId === 'finder' && selectedHistory.resultsData && Array.isArray(selectedHistory.resultsData) && selectedHistory.resultsData.length > 0 ? (
+            selectedHistory.resultsData.map((result, index) => (
+              <div key={index} className="bg-white/40 rounded-2xl p-4">
+                {result.title && (
+                  <h3 className="font-bold text-[var(--black-dark)] text-base mb-2">{result.title}</h3>
+                )}
+                {result.desc && (
+                  <p className="text-sm text-gray-700 leading-relaxed">{result.desc}</p>
+                )}
+                {result.question && (
+                  <p className="text-xs text-gray-500 mt-2">質問: {result.question}</p>
+                )}
+              </div>
+            ))
+          ) : selectedHistory.toolId === 'torisetsu' && selectedHistory.resultsData && Array.isArray(selectedHistory.resultsData) && selectedHistory.resultsData.length > 0 ? (
+            selectedHistory.resultsData.map((person, index) => (
+              <div key={index} className="bg-white/40 rounded-2xl p-4">
+                <h3 className="font-bold text-[var(--black-dark)] text-base mb-3">{person.name}</h3>
+                <div className="space-y-3">
+                  {person.strengths && (
+                    <div>
+                      <h4 className="font-bold text-sm mb-1">{person.strengths.emoji} {person.strengths.title}</h4>
+                      <p className="text-xs text-gray-700">{person.strengths.desc}</p>
+                    </div>
+                  )}
+                  {person.weaknesses && (
+                    <div>
+                      <h4 className="font-bold text-sm mb-1">{person.weaknesses.emoji} {person.weaknesses.title}</h4>
+                      <p className="text-xs text-gray-700">{person.weaknesses.desc}</p>
+                    </div>
+                  )}
+                  {person.praise && (
+                    <div>
+                      <h4 className="font-bold text-sm mb-1">{person.praise.emoji} {person.praise.title}</h4>
+                      <p className="text-xs text-gray-700">{person.praise.desc}</p>
+                    </div>
+                  )}
+                  {person.feedback && (
+                    <div>
+                      <h4 className="font-bold text-sm mb-1">{person.feedback.emoji} {person.feedback.title}</h4>
+                      <p className="text-xs text-gray-700">{person.feedback.desc}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : selectedHistory.toolId === 'archive' && selectedHistory.resultsData && Array.isArray(selectedHistory.resultsData) && selectedHistory.resultsData.length > 0 ? (
+            selectedHistory.resultsData.map((item, index) => (
+              <div key={index} className="bg-white/40 rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">{item.emoji}</span>
+                  <h3 className="font-bold text-[var(--black-dark)] text-base">{item.title}</h3>
+                </div>
+                {item.period && (
+                  <p className="text-xs text-gray-500 mb-1">{item.period}</p>
+                )}
+                {item.desc && (
+                  <p className="text-sm text-gray-700 leading-relaxed">{item.desc}</p>
+                )}
+              </div>
+            ))
+          ) : selectedHistory.toolId === 'timeline' && selectedHistory.resultsData && selectedHistory.resultsData.yearlyData ? (
+            <div className="space-y-4">
+              {selectedHistory.resultsData.yearlyData.map((yearData, index) => (
+                <div key={index} className="bg-white/40 rounded-2xl p-4">
+                  <h3 className="font-bold text-[var(--black-dark)] text-base mb-2">{yearData.year}年: {yearData.catchphrase}</h3>
+                  {yearData.quotes && yearData.quotes.map((quote, qIndex) => (
+                    <div key={qIndex} className="mt-2 pl-3 border-l-2 border-[var(--blue-500)]">
+                      <p className="text-xs text-gray-700 mb-1">{quote.quote}</p>
+                      {quote.reason && (
+                        <p className="text-xs text-gray-500 italic">{quote.reason}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : selectedHistory.toolId === 'future' && selectedHistory.resultsData && Array.isArray(selectedHistory.resultsData) && selectedHistory.resultsData.length > 0 ? (
+            selectedHistory.resultsData.map((person, index) => (
+              <div key={index} className="bg-white/40 rounded-2xl p-4">
+                <h3 className="font-bold text-[var(--black-dark)] text-base mb-3">{person.name}の5年後の未来</h3>
+                <div className="space-y-3">
+                  {person.lightFuture && (
+                    <div>
+                      <h4 className="font-bold text-sm mb-1">✨ {person.lightFuture.title}</h4>
+                      <p className="text-xs text-gray-700">{person.lightFuture.desc}</p>
+                    </div>
+                  )}
+                  {person.realisticFuture && (
+                    <div>
+                      <h4 className="font-bold text-sm mb-1">📊 {person.realisticFuture.title}</h4>
+                      <p className="text-xs text-gray-700">{person.realisticFuture.desc}</p>
+                    </div>
+                  )}
+                  {person.darkFuture && (
+                    <div>
+                      <h4 className="font-bold text-sm mb-1">🌑 {person.darkFuture.title}</h4>
+                      <p className="text-xs text-gray-700">{person.darkFuture.desc}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-sm text-center">結果データがありません</p>
+          )}
+        </div>
+
+        {/* 削除ボタン */}
+        <button
+          onClick={handleDelete}
+          className="mt-6 w-full h-12 bg-red-500 hover:opacity-90 text-white font-bold rounded-full flex items-center justify-center transition-all active:scale-95"
+        >
+          削除
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// 分析履歴画面（ルーティング）
+const HistoryScreen = ({ screen, setScreen, history, setHistory, selectedHistory, setSelectedHistory }) => {
+  if (screen === 'historyDetail') {
+    return <HistoryDetailScreen selectedHistory={selectedHistory} setScreen={setScreen} history={history} setHistory={setHistory} />;
+  }
+  return <HistoryListScreen history={history} setScreen={setScreen} setSelectedHistory={setSelectedHistory} />;
+};
+
 // ② ツール選択画面（左アイコン・右説明・スマホ画面いっぱい）
-const SelectionScreen = ({ setSelectedTool, setScreen }) => (
-  <div className="flex flex-col min-h-screen w-full max-w-lg mx-auto">
-    <h2 className="text-base sm:text-lg font-bold text-gray-700 py-3 px-4 sm:py-4 text-center shrink-0">使いたいツールを選んでね</h2>
-    <div className="flex-1 overflow-y-auto px-3 sm:px-4 pb-6 pb-safe space-y-2 sm:space-y-3">
-      {TOOLS.map((tool) => (
+const SelectionScreen = ({ setSelectedTool, setScreen, activeTab, setActiveTab }) => {
+  if (activeTab === 'history') {
+    return <HistoryScreen screen={screen === 'historyList' || screen === 'historyDetail' ? screen : 'historyList'} setScreen={setScreen} history={history} setHistory={setHistory} selectedHistory={selectedHistory} setSelectedHistory={setSelectedHistory} />;
+  }
+  
+  return (
+    <div className="flex flex-col min-h-screen w-full max-w-lg mx-auto">
+      <h2 className="text-base sm:text-lg font-bold text-gray-700 py-3 px-4 sm:py-4 text-center shrink-0">使いたいツールを選んでね</h2>
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 pb-32 pb-safe space-y-2 sm:space-y-3">
+        {TOOLS.map((tool) => (
         <div
           key={tool.id}
           onClick={() => { setSelectedTool(tool); setScreen('details'); }}
@@ -1003,10 +1393,11 @@ const SelectionScreen = ({ setSelectedTool, setScreen }) => (
             )}
           </div>
         </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ② ツールの詳細画面（画面全体スクロール・ルールボタン・戻るボタンは固定）
 const DetailsScreen = ({ selectedTool, setScreen }) => {
@@ -3367,7 +3758,10 @@ const FutureInputScreen = ({
 };
 
 const App = () => {
-  const [screen, setScreen] = useState('intro'); 
+  const [screen, setScreen] = useState('intro');
+  const [activeTab, setActiveTab] = useState('tools'); // 'tools' or 'history'
+  const [history, setHistory] = useState(getHistoryFromStorage());
+  const [selectedHistory, setSelectedHistory] = useState(null); 
   const [selectedTool, setSelectedTool] = useState(null);
   
   // 共通点発見レーダー用の状態
@@ -3462,7 +3856,17 @@ const App = () => {
   };
 
   const goBack = () => {
-    if (screen === 'details') setScreen('selection');
+    if (screen === 'historyDetail') {
+      setScreen('historyList');
+      setSelectedHistory(null);
+    }
+    else if (screen === 'historyList') {
+      setScreen('selection');
+      setActiveTab('tools');
+    }
+    else if (screen === 'onboarding2') setScreen('onboarding1');
+    else if (screen === 'onboarding1') setScreen('intro');
+    else if (screen === 'details') setScreen('selection');
     else if (screen === 'input') setScreen('details');
     else if (screen === 'analyzing') setScreen('input');
     else if (screen === 'results') setScreen('input');
@@ -3518,6 +3922,20 @@ const App = () => {
       const aiResults = await analyzeWithGemini(activeParticipants);
       setResultsData(aiResults);
       setFinderApiError(null);
+      // 履歴を保存
+      const names = activeParticipants.length > 0 ? activeParticipants.map(p => p.name) : ['あなた'];
+      const newHistoryItem = {
+        id: Date.now().toString(),
+        toolId: 'finder',
+        toolName: '共通点発見レーダー',
+        toolIcon: `${import.meta.env.BASE_URL}icon-finder.png`,
+        date: new Date().toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+        participants: names,
+        resultsData: aiResults
+      };
+      const updatedHistory = [newHistoryItem, ...history];
+      setHistory(updatedHistory);
+      saveHistoryToStorage(updatedHistory);
     } catch (e) {
       console.error(e);
       setFinderApiError(e?.message || 'AI分析に失敗しました');
@@ -3559,10 +3977,12 @@ const App = () => {
     setTorisetsuAnalysisStatus('AIが会話を分析中...');
 
     // 2. AI分析実行
+    let finalResults;
     try {
       const results = await analyzeTorisetsuWithGemini(chatText, names);
       setTorisetsuResultsData(results);
       setTorisetsuApiError(null);
+      finalResults = results;
     } catch (e) {
       console.error('トリセツ分析エラー:', e);
       setTorisetsuApiError(e?.message || 'AI分析に失敗しました');
@@ -3571,6 +3991,7 @@ const App = () => {
         ...DEFAULT_TORISETSU_ITEM,
       }));
       setTorisetsuResultsData(fallback);
+      finalResults = fallback;
     }
 
     // 3. 終わったらプログレスバーを満たす
@@ -3579,7 +4000,21 @@ const App = () => {
     setTorisetsuAnalysisStatus('分析完了！');
     setTorisetsuResultPage(1);
 
-    // 4. プログレスバーが満ちたのを見せてから画面を変える
+    // 4. 履歴を保存
+    const newHistoryItem = {
+      id: Date.now().toString(),
+      toolId: 'torisetsu',
+      toolName: '私のトリセツメーカー',
+      toolIcon: `${import.meta.env.BASE_URL}icon-torisetsu.png`,
+      date: new Date().toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      participants: names,
+      resultsData: finalResults
+    };
+    const updatedHistory = [newHistoryItem, ...history];
+    setHistory(updatedHistory);
+    saveHistoryToStorage(updatedHistory);
+    
+    // 5. プログレスバーが満ちたのを見せてから画面を変える
     setTimeout(() => setScreen('torisetsuResults'), 1000);
   };
 
@@ -3653,19 +4088,35 @@ const App = () => {
 
     setArchiveAnalysisStatus('AIが趣味の移り変わりを分析中...');
 
+    let finalResults;
     try {
       const results = await analyzeArchiveWithGemini(chatText, names);
       setArchiveResultsData(results);
       setArchiveApiError(null);
+      finalResults = results;
     } catch (e) {
       console.error('好みアーカイブ分析エラー:', e);
       setArchiveApiError(e?.message || 'AI分析に失敗しました');
       setArchiveResultsData(DEFAULT_ARCHIVE_RESULTS);
+      finalResults = DEFAULT_ARCHIVE_RESULTS;
     }
 
     clearInterval(uiInterval);
     setArchiveAnalysisProgress(100);
     setArchiveAnalysisStatus('分析完了！');
+    // 履歴を保存
+    const newHistoryItem = {
+      id: Date.now().toString(),
+      toolId: 'archive',
+      toolName: '好みアーカイブ',
+      toolIcon: `${import.meta.env.BASE_URL}icon-archive.png`,
+      date: new Date().toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      participants: names,
+      resultsData: finalResults
+    };
+    const updatedHistory = [newHistoryItem, ...history];
+    setHistory(updatedHistory);
+    saveHistoryToStorage(updatedHistory);
     setTimeout(() => setScreen('archiveResults'), 1000);
   };
 
@@ -3701,19 +4152,35 @@ const App = () => {
 
     setTimelineAnalysisStatus('AIが関係性の変化を分析中...');
 
+    let finalResults;
     try {
       const results = await analyzeTimelineWithGemini(chatText, names);
       setTimelineResultsData(results);
       setTimelineApiError(null);
+      finalResults = results;
     } catch (e) {
       console.error('関係性タイムライン分析エラー:', e);
       setTimelineApiError(e?.message || 'AI分析に失敗しました');
       setTimelineResultsData(DEFAULT_TIMELINE_RESULTS);
+      finalResults = DEFAULT_TIMELINE_RESULTS;
     }
 
     clearInterval(uiInterval);
     setTimelineAnalysisProgress(100);
     setTimelineAnalysisStatus('分析完了！');
+    // 履歴を保存
+    const newHistoryItem = {
+      id: Date.now().toString(),
+      toolId: 'timeline',
+      toolName: '関係性タイムライン',
+      toolIcon: `${import.meta.env.BASE_URL}icon-timeline.png`,
+      date: new Date().toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      participants: names,
+      resultsData: finalResults
+    };
+    const updatedHistory = [newHistoryItem, ...history];
+    setHistory(updatedHistory);
+    saveHistoryToStorage(updatedHistory);
     setTimeout(() => setScreen('timelineResults'), 1000);
   };
 
@@ -3750,19 +4217,35 @@ const App = () => {
 
     setFutureAnalysisStatus('AIが5年後の未来を分析中...');
 
+    let finalResults;
     try {
       const results = await analyzeFutureWithGemini(chatText, names);
       setFutureResultsData(results);
       setFutureApiError(null);
+      finalResults = results;
     } catch (e) {
       console.error('5年後の未来レポート分析エラー:', e);
       setFutureApiError(e?.message || 'AI分析に失敗しました');
       setFutureResultsData(DEFAULT_FUTURE_RESULTS);
+      finalResults = DEFAULT_FUTURE_RESULTS;
     }
 
     clearInterval(uiInterval);
     setFutureAnalysisProgress(100);
     setFutureAnalysisStatus('分析完了！');
+    // 履歴を保存
+    const newHistoryItem = {
+      id: Date.now().toString(),
+      toolId: 'future',
+      toolName: '５年後の未来レポート',
+      toolIcon: `${import.meta.env.BASE_URL}icon-future.png`,
+      date: new Date().toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      participants: names,
+      resultsData: finalResults
+    };
+    const updatedHistory = [newHistoryItem, ...history];
+    setHistory(updatedHistory);
+    saveHistoryToStorage(updatedHistory);
     setTimeout(() => setScreen('futureResults'), 1000);
   };
 
@@ -3770,7 +4253,18 @@ const App = () => {
     <div style={bgStyle} className="text-gray-900 overflow-x-hidden selection:bg-blue-200 selection:text-blue-900">
       <main className="container mx-auto max-w-lg min-h-screen relative">
         {screen === 'intro' && <IntroScreen setScreen={setScreen} />}
-        {screen === 'selection' && <SelectionScreen setSelectedTool={setSelectedTool} setScreen={setScreen} />}
+        {screen === 'onboarding1' && <OnboardingScreen1 setScreen={setScreen} goBack={goBack} />}
+        {screen === 'onboarding2' && <OnboardingScreen2 setScreen={setScreen} goBack={goBack} />}
+        {screen === 'selection' && <SelectionScreen setSelectedTool={setSelectedTool} setScreen={setScreen} activeTab={activeTab} setActiveTab={setActiveTab} />}
+        {(screen === 'historyList' || screen === 'historyDetail') && <HistoryScreen screen={screen} setScreen={setScreen} history={history} setHistory={setHistory} selectedHistory={selectedHistory} setSelectedHistory={setSelectedHistory} />}
+        {/* ホーム画面以降のすべての画面でホームタブを表示 */}
+        {screen !== 'intro' && screen !== 'onboarding1' && screen !== 'onboarding2' && (
+          <HomeTab 
+            activeTab={screen === 'historyList' || screen === 'historyDetail' ? 'history' : activeTab} 
+            setActiveTab={setActiveTab} 
+            setScreen={setScreen} 
+          />
+        )}
         {screen === 'details' && <DetailsScreen selectedTool={selectedTool} setScreen={setScreen} />}
         
         {/* 共通点発見レーダーのフロー */}

@@ -33,6 +33,15 @@
       .cloud-flow { animation: cloud-flow 90s linear infinite; }
       .cloud-flow-2 { animation: cloud-flow 120s linear infinite; animation-delay: -30s; }
       .cloud-flow-3 { animation: cloud-flow 100s linear infinite; animation-delay: -60s; }
+      .home-tab-width-sm { width: calc(194px * 48 / 87); }
+      @media (min-width: 640px) {
+        .home-tab-width-sm { width: calc(194px * 60 / 87); }
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in { animation: fade-in 0.5s ease-in-out; }
       .shadow-1 { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
       /* スマホ・ノッチ対応: safe-area-inset */
       .pb-safe { padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px)); }
