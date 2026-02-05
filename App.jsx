@@ -622,7 +622,7 @@ const BackButton = ({ screen, goBack }) => {
   return (
     <button
       onClick={goBack}
-      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white/50"
       style={{ top: 'max(1rem, env(safe-area-inset-top))', left: 'max(1rem, env(safe-area-inset-left))' }}
       aria-label="戻る"
     >
@@ -1019,7 +1019,7 @@ const OnboardingScreen1 = ({ setScreen, goBack }) => (
     {/* 戻るボタン */}
     <button
       onClick={goBack}
-      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white/50"
       style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', left: 'max(1rem, env(safe-area-inset-left))' }}
       aria-label="戻る"
     >
@@ -1073,7 +1073,7 @@ const OnboardingScreen2 = ({ setScreen, goBack }) => (
     {/* 戻るボタン */}
     <button
       onClick={goBack}
-      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+      className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white/50"
       style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))', left: 'max(1rem, env(safe-area-inset-left))' }}
       aria-label="戻る"
     >
@@ -1094,7 +1094,7 @@ const OnboardingScreen2 = ({ setScreen, goBack }) => (
       {/* フキダシ */}
       <div className="relative w-full max-w-[320px] sm:max-w-[360px] mb-6 sm:mb-8">
         <div className="bg-white/95 rounded-[28px] px-5 py-3 shadow-lg border border-[var(--blue-500)]/20">
-          <p className="text-sm sm:text-base font-bold text-[var(--black-dark)] text-center leading-relaxed">
+          <p className="text-[13px] font-normal text-[#666666] text-center leading-relaxed">
             ぼく、「くもぐら」が社員さん同士がお互いを知り、いいチームになれるように精一杯サポートしますね！
           </p>
         </div>
@@ -1207,7 +1207,7 @@ const HistoryDetailScreen = ({ selectedHistory, setScreen, history, setHistory }
           setScreen('historyList');
           setSelectedHistory(null);
         }}
-        className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white"
+        className="fixed z-50 w-12 h-12 sm:w-[60px] sm:h-[60px] flex items-center justify-center rounded-full shadow-xl hover:scale-105 active:scale-95 transition-transform focus:outline-none touch-manipulation bg-white/50"
         style={{ top: 'max(1rem, env(safe-area-inset-top))', left: 'max(1rem, env(safe-area-inset-left))' }}
         aria-label="戻る"
       >
@@ -1366,7 +1366,7 @@ const SelectionScreen = ({ setSelectedTool, setScreen, activeTab, setActiveTab }
   
   return (
     <div className="flex flex-col min-h-screen w-full max-w-lg mx-auto">
-      <h2 className="text-base sm:text-lg font-bold text-gray-700 py-3 px-4 sm:py-4 text-center shrink-0">使いたいツールを選んでね</h2>
+      <h2 className="text-base sm:text-lg font-bold text-gray-700 py-[13px] px-4 sm:py-[14px] text-center shrink-0">使いたいツールを選んでね</h2>
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 pb-32 pb-safe space-y-2 sm:space-y-3">
         {TOOLS.map((tool) => (
         <div
@@ -1995,10 +1995,10 @@ const InputScreen = ({ participants, setParticipants, startAnalysis, canGoNext }
 
   return (
     <div 
-      className="p-4 sm:p-6 max-w-lg mx-auto"
+      className="p-4 sm:p-6 max-w-lg mx-auto overflow-y-auto min-h-screen"
       style={{ paddingBottom: 'max(11rem, calc(7rem + env(safe-area-inset-bottom, 0px)))' }}
     >
-      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-2 text-center">チャットデータを投入しよう！</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mt-[10px] mb-[12px] text-center">チャットデータを投入しよう！</h2>
       <div className="flex justify-center mb-4 sm:mb-6">
         <img src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`} alt="" className="max-w-full max-h-[260px] sm:max-h-[320px] w-full object-contain rounded-xl" />
       </div>
@@ -2083,8 +2083,7 @@ const InputScreen = ({ participants, setParticipants, startAnalysis, canGoNext }
       )}
 
       <div 
-        className="fixed left-0 right-0 flex justify-center px-4 sm:px-6 max-w-lg mx-auto"
-        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        className="flex justify-center px-4 sm:px-6 max-w-lg mx-auto mt-6 mb-4"
       >
         <button 
           disabled={!canGoNext}
@@ -2095,7 +2094,7 @@ const InputScreen = ({ participants, setParticipants, startAnalysis, canGoNext }
               : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          <span>次へ進む</span>
+          <span>分析開始</span>
           <ChevronLeft size={20} className="rotate-180 shrink-0" />
         </button>
       </div>
@@ -2163,10 +2162,10 @@ const TorisetsuInputScreen = ({
 
   return (
     <div 
-      className="p-4 sm:p-6 max-w-lg mx-auto"
+      className="p-4 sm:p-6 max-w-lg mx-auto overflow-y-auto min-h-screen"
       style={{ paddingBottom: 'max(11rem, calc(7rem + env(safe-area-inset-bottom, 0px)))' }}
     >
-      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-2 text-center">チャットデータを投入しよう！</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mt-[10px] mb-[12px] text-center">チャットデータを投入しよう！</h2>
       <div className="flex justify-center mb-4 sm:mb-6">
         <img src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`} alt="" className="max-w-full max-h-[260px] sm:max-h-[320px] w-full object-contain rounded-xl" />
       </div>
@@ -2306,8 +2305,7 @@ const TorisetsuInputScreen = ({
       </div>
 
       <div 
-        className="fixed left-0 right-0 flex justify-center px-4 sm:px-6 max-w-lg mx-auto"
-        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        className="flex justify-center px-4 sm:px-6 max-w-lg mx-auto mt-6 mb-4"
       >
         <button 
           disabled={!canGoNextTorisetsu}
@@ -2318,7 +2316,7 @@ const TorisetsuInputScreen = ({
               : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          <span>次へ進む</span>
+          <span>分析開始</span>
           <ChevronLeft size={20} className="rotate-180 shrink-0" />
         </button>
       </div>
@@ -2382,10 +2380,10 @@ const ArchiveInputScreen = ({
 
   return (
     <div 
-      className="p-4 sm:p-6 max-w-lg mx-auto"
+      className="p-4 sm:p-6 max-w-lg mx-auto overflow-y-auto min-h-screen"
       style={{ paddingBottom: 'max(11rem, calc(7rem + env(safe-area-inset-bottom, 0px)))' }}
     >
-      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-2 text-center">チャットデータを投入しよう！</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mt-[10px] mb-[12px] text-center">チャットデータを投入しよう！</h2>
       <div className="flex justify-center mb-4 sm:mb-6">
         <img src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`} alt="" className="max-w-full max-h-[260px] sm:max-h-[320px] w-full object-contain rounded-xl" />
       </div>
@@ -2508,7 +2506,7 @@ const ArchiveInputScreen = ({
             canGoNextArchive ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          <span>次へ進む</span>
+          <span>分析開始</span>
           <ChevronLeft size={20} className="rotate-180 shrink-0" />
         </button>
       </div>
@@ -2572,10 +2570,10 @@ const TimelineInputScreen = ({
 
   return (
     <div
-      className="p-4 sm:p-6 max-w-lg mx-auto"
+      className="p-4 sm:p-6 max-w-lg mx-auto overflow-y-auto min-h-screen"
       style={{ paddingBottom: 'max(11rem, calc(7rem + env(safe-area-inset-bottom, 0px)))' }}
     >
-      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-2 text-center">チャットデータを投入しよう！</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mt-[10px] mb-[12px] text-center">チャットデータを投入しよう！</h2>
       <div className="flex justify-center mb-4 sm:mb-6">
         <img src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`} alt="" className="max-w-full max-h-[260px] sm:max-h-[320px] w-full object-contain rounded-xl" />
       </div>
@@ -2688,8 +2686,7 @@ const TimelineInputScreen = ({
       </div>
 
       <div
-        className="fixed left-0 right-0 flex justify-center px-4 sm:px-6 max-w-lg mx-auto"
-        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        className="flex justify-center px-4 sm:px-6 max-w-lg mx-auto mt-6 mb-4"
       >
         <button
           disabled={!canGoNextTimeline}
@@ -2698,7 +2695,7 @@ const TimelineInputScreen = ({
             canGoNextTimeline ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          <span>分析をはじめる</span>
+          <span>分析開始</span>
           <ChevronLeft size={20} className="rotate-180 shrink-0" />
         </button>
       </div>
@@ -3059,7 +3056,7 @@ const TorisetsuAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 h-[90vh] py-6">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 py-6" style={{ paddingTop: 'max(5rem, calc(4rem + env(safe-area-inset-top)))', paddingBottom: 'max(6rem, calc(5rem + env(safe-area-inset-bottom)))' }}>
         {/* プログレスバー */}
         <div className="w-full max-w-md shrink-0">
           <p className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
@@ -3076,7 +3073,7 @@ const TorisetsuAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
         </div>
 
         {/* くもぐらしっぽGIF＋セリフ（GIFと重なってもOK・くもぐらに近い位置） */}
-        <div className="w-full flex-1 min-h-0 flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
+        <div className="w-full flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
           <img
             src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`}
             alt=""
@@ -3281,10 +3278,11 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center h-[90vh] py-4">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center py-4">
         <div
           key={resultPage}
-          className="w-full flex-1 min-h-0 flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
+          className="w-full flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
+          style={{ maxHeight: 'calc(90vh - 2rem)' }}
         >
           {/* ヘッダー: 〇〇の取り扱い説明書 */}
           <div className="shrink-0 p-5 pb-3">
@@ -3301,7 +3299,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
           </div>
 
           {/* 本文（スクロール可能） */}
-          <div className="flex-1 overflow-y-auto px-5 pb-4 space-y-4">
+          <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-4 space-y-4">
             <section>
               <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
                 <span className="text-lg">{currentPerson.strengths.emoji || '📝'}</span>
@@ -3353,7 +3351,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
           </div>
 
           {/* ページネーション */}
-          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center mb-[max(5rem,calc(4rem+env(safe-area-inset-bottom)))]">
+          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center">
             <button
               disabled={resultPage === 1}
               onClick={() => setResultPage(p => p - 1)}
@@ -3483,10 +3481,10 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center h-[90vh] py-4">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center py-4">
         <div
           key={resultPage}
-          className="w-full flex-1 min-h-0 flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
+          className="w-full flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
         >
           <div className="shrink-0 p-5 pb-3">
             <div className="flex items-center gap-2 mb-1">
@@ -3537,7 +3535,7 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
             </section>
           </div>
 
-          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center mb-[max(5rem,calc(4rem+env(safe-area-inset-bottom)))]">
+          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center">
             <button
               disabled={resultPage === 1}
               onClick={() => setResultPage(p => p - 1)}
@@ -3623,10 +3621,10 @@ const FutureInputScreen = ({
 
   return (
     <div
-      className="p-4 sm:p-6 max-w-lg mx-auto"
+      className="p-4 sm:p-6 max-w-lg mx-auto overflow-y-auto min-h-screen"
       style={{ paddingBottom: 'max(11rem, calc(7rem + env(safe-area-inset-bottom, 0px)))' }}
     >
-      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mb-2 text-center">チャットデータを投入しよう！</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-gray-700 mt-[10px] mb-[12px] text-center">チャットデータを投入しよう！</h2>
       <div className="flex justify-center mb-4 sm:mb-6">
         <img src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`} alt="" className="max-w-full max-h-[260px] sm:max-h-[320px] w-full object-contain rounded-xl" />
       </div>
@@ -3639,7 +3637,7 @@ const FutureInputScreen = ({
       <div className="space-y-5">
         <div className="rounded-[33px] overflow-hidden shadow-md flex flex-col transition-all focus-within:ring-2 focus-within:ring-[#3986BB]/30 relative">
           <div className={`absolute inset-0 bg-white rounded-[33px] transition-opacity duration-300 ${chatFileName ? 'opacity-100' : 'opacity-20'}`} />
-          <div className="relative p-4 sm:p-[28px] flex flex-col gap-3 sm:gap-4">
+          <div className="relative px-6 py-4 sm:px-[36px] sm:py-[28px] flex flex-col gap-3 sm:gap-4">
             <p className="text-sm font-bold text-gray-700">チャットデータ</p>
             <div className="flex items-center gap-3 min-h-[44px]">
               <label className="cursor-pointer shrink-0 h-[30px] flex items-center justify-center hover:opacity-90 transition-opacity">
@@ -3739,8 +3737,7 @@ const FutureInputScreen = ({
       </div>
 
       <div
-        className="fixed left-0 right-0 flex justify-center px-4 sm:px-6 max-w-lg mx-auto"
-        style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        className="flex justify-center px-4 sm:px-6 max-w-lg mx-auto mt-6 mb-4"
       >
         <button
           disabled={!canGoNextFuture}
@@ -3749,7 +3746,7 @@ const FutureInputScreen = ({
             canGoNextFuture ? 'bg-[var(--blue-500)] hover:opacity-90 cursor-pointer' : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
-          <span>次へ進む</span>
+          <span>分析開始</span>
           <ChevronLeft size={20} className="rotate-180 shrink-0" />
         </button>
       </div>
