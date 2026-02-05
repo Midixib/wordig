@@ -62,12 +62,30 @@ const DEFAULT_RESULTS = [
 ];
 
 // --- ヘルパー関数: Gemini API呼び出し ---
-const analyzeWithGemini = async (participantsData) => {
+const analyzeWithGemini = async (participantsData, level = 1) => {
   try {
     let combinedText = "以下のチャット/テキストデータを分析してください。\n\n";
     participantsData.forEach((p, index) => {
       combinedText += `--- 参加者${index + 1}: ${p.name} ---\n${p.textData.substring(0, 3000)}\n\n`;
     });
+
+    // レベルに応じた難易度と関連性の指示を生成
+    let difficultyInstruction = '';
+    let relevanceInstruction = '';
+    
+    if (level === 1) {
+      difficultyInstruction = '基本的な質問で、誰でも答えやすい内容にしてください。';
+      relevanceInstruction = '共通点と直接関連する、表面的で分かりやすい質問にしてください。';
+    } else if (level === 2) {
+      difficultyInstruction = '少し深掘りした質問で、考えて答える必要がある内容にしてください。';
+      relevanceInstruction = '共通点の背景や理由を探る、より深い関連性のある質問にしてください。';
+    } else if (level === 3) {
+      difficultyInstruction = 'より深い洞察を求める質問で、自己分析や価値観を問う内容にしてください。';
+      relevanceInstruction = '共通点の本質や根底にある価値観に迫る、高度な関連性のある質問にしてください。';
+    } else {
+      difficultyInstruction = `レベル${level}に応じて、より高度で深い洞察を求める質問にしてください。自己理解や価値観の探求を促す内容にしてください。`;
+      relevanceInstruction = `共通点の本質的な意味や、参加者間の深い共通性を引き出す、非常に高度な関連性のある質問にしてください。`;
+    }
 
     const prompt = `
       あなたは優秀なファシリテーターAIです。
@@ -77,10 +95,14 @@ const analyzeWithGemini = async (participantsData) => {
       重要：分析結果（title、desc、question）には、元のテキストデータから直接引用した言葉（例：「〇〇」のような具体的な発言）を絶対に含めないでください。初対面の相手と共有することを想定し、引用されると気まずくなる可能性のある表現は避けてください。共通点は要約や言い換えで伝えてください。
       
       【質問についての重要な指示】
+      現在の質問レベル: ${level}
+      
       questionは「この共通点（title）を参加者同士で話し合うときの、最初に投げかける質問」にしてください。
       - その共通点と直接結びついており、答えると自然にその共通点の話題に入れるものにする
       - 「好きな〇〇は？」「最近ハマっている〇〇は？」のように、共通点のテーマに沿った一言で答えられる形式
-      - 難しく考えなくても答えられるカジュアルな内容。具体的なエピソードを求めず、好みや最近のことを聞く
+      - ${difficultyInstruction}
+      - ${relevanceInstruction}
+      - レベルが上がるほど、より深い洞察や価値観を引き出す質問になるようにしてください
       
       出力は以下のJSON形式のみで行ってください。Markdown記法は不要です。
       
@@ -88,7 +110,7 @@ const analyzeWithGemini = async (participantsData) => {
         {
           "title": "短いキャッチーなタイトル（例：『隠れ美食家』）",
           "desc": "その共通点に関する詳細な分析と、なぜそれが素晴らしいかという説明（100文字程度）",
-          "question": "この共通点について話すときのお題（共通点のテーマに直結した、答えやすい質問）"
+          "question": "この共通点について話すときのお題（共通点のテーマに直結した、レベル${level}に応じた難易度と関連性を持つ質問）"
         },
         ...あと2つ（計3つ）
       ]
@@ -2791,7 +2813,7 @@ const ArchiveAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
 // ⑤ 好みアーカイブ専用: 分析結果画面（共通の趣味嗜好・期間・30字以内の説明を1ページで表示）
 const ArchiveResultsScreen = ({ resultsData, apiError }) => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-transparent">
+    <div className="fixed inset-0 overflow-y-auto bg-transparent">
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow w-32 opacity-40 top-[15%] mix-blend-screen" />
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-24 opacity-30 top-[35%] mix-blend-screen" />
@@ -2800,33 +2822,33 @@ const ArchiveResultsScreen = ({ resultsData, apiError }) => {
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col h-[90vh] py-4">
-        <div className="w-full flex-1 min-h-0 flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden">
-          <div className="shrink-0 p-5 pb-3">
-            <div className="flex items-center gap-2 mb-1">
-              <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
-              <h2 className="text-lg font-bold text-gray-800">趣味嗜好の歴史年表</h2>
+      <div className="relative z-10 w-full max-w-md mx-auto px-4" style={{ paddingTop: 'max(calc(60px + 1rem), calc(60px + env(safe-area-inset-top)))', paddingBottom: 'calc(120px + 2rem + env(safe-area-inset-bottom))' }}>
+        {/* ヘッダー: 趣味嗜好の歴史年表 */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
+            <h2 className="text-lg font-bold text-gray-800">趣味嗜好の歴史年表</h2>
+          </div>
+          {apiError && (
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
+              <Info size={16} className="text-amber-600 shrink-0" />
+              <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
             </div>
-            {apiError && (
-              <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
-                <Info size={16} className="text-amber-600 shrink-0" />
-                <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
-              </div>
-            )}
-          </div>
+          )}
+        </div>
 
-          <div className="flex-1 overflow-y-auto px-5 pb-5 space-y-4">
-            {resultsData.map((item, index) => (
-              <section key={index} className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[var(--black-dark)] text-sm mb-1 flex items-center gap-2">
-                  <span className="text-base" aria-hidden>{item.emoji || '✨'}</span>
-                  <span>{item.title}</span>
-                </h4>
-                <p className="text-xs text-[var(--black-mid)] mb-2">{item.period}</p>
-                <p className="text-xs text-[var(--black-mid)] leading-relaxed">{item.desc}</p>
-              </section>
-            ))}
-          </div>
+        {/* 本文 */}
+        <div className="space-y-4">
+          {resultsData.map((item, index) => (
+            <section key={index} className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[var(--black-dark)] text-sm mb-1 flex items-center gap-2">
+                <span className="text-base" aria-hidden>{item.emoji || '✨'}</span>
+                <span>{item.title}</span>
+              </h4>
+              <p className="text-xs text-[var(--black-mid)] mb-2">{item.period}</p>
+              <p className="text-xs text-[var(--black-mid)] leading-relaxed">{item.desc}</p>
+            </section>
+          ))}
         </div>
       </div>
     </div>
@@ -2945,7 +2967,7 @@ const TimelineResultsScreen = ({ resultsData, apiError }) => {
     .join(' ');
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-transparent">
+    <div className="fixed inset-0 overflow-y-auto bg-transparent">
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow w-32 opacity-40 top-[15%] mix-blend-screen" />
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-24 opacity-30 top-[35%] mix-blend-screen" />
@@ -2954,65 +2976,65 @@ const TimelineResultsScreen = ({ resultsData, apiError }) => {
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col h-[90vh] py-4">
-        <div className="w-full flex-1 min-h-0 flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden">
-          <div className="shrink-0 p-5 pb-3">
-            <div className="flex items-center gap-2 mb-1">
-              <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
-              <h2 className="text-lg font-bold text-gray-800">関係性タイムライン</h2>
-            </div>
-            {apiError && (
-              <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
-                <Info size={16} className="text-amber-600 shrink-0" />
-                <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
-              </div>
-            )}
+      <div className="relative z-10 w-full max-w-md mx-auto px-4" style={{ paddingTop: 'max(calc(60px + 1rem), calc(60px + env(safe-area-inset-top)))', paddingBottom: 'calc(120px + 2rem + env(safe-area-inset-bottom))' }}>
+        {/* ヘッダー: 関係性タイムライン */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
+            <h2 className="text-lg font-bold text-gray-800">関係性タイムライン</h2>
           </div>
+          {apiError && (
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
+              <Info size={16} className="text-amber-600 shrink-0" />
+              <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
+            </div>
+          )}
+        </div>
 
-          <div className="flex-1 overflow-y-auto px-5 pb-5 space-y-4">
-            {hasGraph && (
-              <section className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[var(--black-dark)] text-sm mb-3">親密度の推移</h4>
-                <div className="flex justify-center">
-                  <svg width={graphWidth + padding.left + padding.right} height={graphHeight + padding.bottom} className="overflow-visible">
-                    <line x1={padding.left} y1={padding.top} x2={padding.left} y2={graphHeight} stroke="#B4D7EF" strokeWidth="1" />
-                    <line x1={padding.left} y1={graphHeight} x2={graphWidth} y2={graphHeight} stroke="#B4D7EF" strokeWidth="1" />
-                    <text x={padding.left - 5} y={padding.top + 4} textAnchor="end" fontSize="10" fill="#666">100</text>
-                    <text x={padding.left - 5} y={graphHeight - 2} textAnchor="end" fontSize="10" fill="#666">0</text>
-                    <path d={pathD} fill="none" stroke="var(--blue-500)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    {years.map((y, i) => (
-                      <g key={i}>
-                        <circle cx={xScale(i)} cy={yScale(intimacyScores[i] ?? 0)} r="5" fill="var(--blue-500)" />
-                        <text x={xScale(i)} y={graphHeight + 18} textAnchor="middle" fontSize="11" fill="#666">{y}年</text>
-                      </g>
-                    ))}
-                  </svg>
+        {/* 本文 */}
+        <div className="space-y-4">
+          {hasGraph && (
+            <section className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[var(--black-dark)] text-sm mb-3">親密度の推移</h4>
+              <div className="flex justify-center">
+                <svg width={graphWidth + padding.left + padding.right} height={graphHeight + padding.bottom} className="overflow-visible">
+                  <line x1={padding.left} y1={padding.top} x2={padding.left} y2={graphHeight} stroke="#B4D7EF" strokeWidth="1" />
+                  <line x1={padding.left} y1={graphHeight} x2={graphWidth} y2={graphHeight} stroke="#B4D7EF" strokeWidth="1" />
+                  <text x={padding.left - 5} y={padding.top + 4} textAnchor="end" fontSize="10" fill="#666">100</text>
+                  <text x={padding.left - 5} y={graphHeight - 2} textAnchor="end" fontSize="10" fill="#666">0</text>
+                  <path d={pathD} fill="none" stroke="var(--blue-500)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  {years.map((y, i) => (
+                    <g key={i}>
+                      <circle cx={xScale(i)} cy={yScale(intimacyScores[i] ?? 0)} r="5" fill="var(--blue-500)" />
+                      <text x={xScale(i)} y={graphHeight + 18} textAnchor="middle" fontSize="11" fill="#666">{y}年</text>
+                    </g>
+                  ))}
+                </svg>
+              </div>
+            </section>
+          )}
+
+          {yearlyData.map((item, index) => {
+            const intimacy = intimacyScores[index];
+            const isHighIntimacy = typeof intimacy === 'number' && intimacy >= 80;
+            return (
+              <section key={index} className={`rounded-[28px] shadow-lg overflow-hidden p-4 ${isHighIntimacy ? 'bg-[#7DBAE5]/50' : 'bg-white'}`}>
+                {isHighIntimacy && <p className="text-xs font-bold text-[#134E78] text-center mb-2">親密度が80％に達しました</p>}
+                <h4 className="font-bold text-[var(--black-dark)] text-sm mb-2 flex items-center gap-2">
+                  <span className="text-base" aria-hidden>🗓️</span>
+                  <span>{item.year}年：「{item.catchphrase}」</span>
+                </h4>
+                <div className="space-y-3">
+                  {(item.quotes || []).map((q, qi) => (
+                    <div key={qi} className={`rounded-xl p-3 ${isHighIntimacy ? 'bg-white' : 'bg-[var(--blue-50)]'}`}>
+                      <p className="text-xs text-[var(--black-dark)] leading-relaxed font-medium">{q.quote}</p>
+                      <p className="text-[10px] text-[var(--black-light)] mt-1">{q.reason}</p>
+                    </div>
+                  ))}
                 </div>
               </section>
-            )}
-
-            {yearlyData.map((item, index) => {
-              const intimacy = intimacyScores[index];
-              const isHighIntimacy = typeof intimacy === 'number' && intimacy >= 80;
-              return (
-                <section key={index} className={`rounded-[28px] shadow-lg overflow-hidden p-4 ${isHighIntimacy ? 'bg-[#7DBAE5]/50' : 'bg-white'}`}>
-                  {isHighIntimacy && <p className="text-xs font-bold text-[#134E78] text-center mb-2">親密度が80％に達しました</p>}
-                  <h4 className="font-bold text-[var(--black-dark)] text-sm mb-2 flex items-center gap-2">
-                    <span className="text-base" aria-hidden>🗓️</span>
-                    <span>{item.year}年：「{item.catchphrase}」</span>
-                  </h4>
-                  <div className="space-y-3">
-                    {(item.quotes || []).map((q, qi) => (
-                      <div key={qi} className={`rounded-xl p-3 ${isHighIntimacy ? 'bg-white' : 'bg-[var(--blue-50)]'}`}>
-                        <p className="text-xs text-[var(--black-dark)] leading-relaxed font-medium">{q.quote}</p>
-                        <p className="text-[10px] text-[var(--black-light)] mt-1">{q.reason}</p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -3166,7 +3188,7 @@ const AnalyzingScreen = ({ analysisStatus, analysisProgress, icebreakQ, firstRes
 // ⑤ 共通点発見レーダー専用: 分析結果画面（中央配置・固定・スクロールなし・status_kyotsu_1風）
 const CLOUD_SRC = `${import.meta.env.BASE_URL}cloud.png`;
 
-const ResultsScreen = ({ resultPage, setResultPage, respondentOrder, handleReload, resultsData, apiError }) => {
+const ResultsScreen = ({ resultPage, setResultPage, respondentOrder, handleReload, resultsData, apiError, questionLevel }) => {
   const currentData = resultsData[resultPage - 1] || resultsData[0];
   const currentRespondent = respondentOrder[resultPage - 1] || 'あなた';
 
@@ -3182,7 +3204,7 @@ const ResultsScreen = ({ resultPage, setResultPage, respondentOrder, handleReloa
       </div>
 
       {/* カード: 縦中央・下余白で固定ボタンと重ならないように（スマホ対応） */}
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center pb-[max(5rem,calc(4rem+env(safe-area-inset-bottom)))]">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))', paddingBottom: 'calc(120px + 1rem + env(safe-area-inset-bottom))' }}>
         <div
           key={resultPage}
           className="w-full bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
@@ -3195,9 +3217,16 @@ const ResultsScreen = ({ resultPage, setResultPage, respondentOrder, handleReloa
               </div>
             )}
             {/* 共通点ヘッダー */}
-            <div className="flex items-center gap-2 mb-3">
-              <CheckCircle size={22} className="text-[var(--blue-500)] shrink-0" />
-              <h2 className="text-lg font-bold text-gray-800">共通点 {resultPage}</h2>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle size={22} className="text-[var(--blue-500)] shrink-0" />
+                <h2 className="text-lg font-bold text-gray-800">共通点 {resultPage}</h2>
+              </div>
+              {/* 質問レベル表示 */}
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/80 rounded-full border border-[var(--blue-500-30)]">
+                <span className="text-xs text-gray-600">レベル</span>
+                <span className="text-sm font-bold text-[var(--blue-500)]">{questionLevel}</span>
+              </div>
             </div>
             {/* くもぐらのコメント（共通点タイトル＋説明） */}
             <div className="mb-4">
@@ -3269,7 +3298,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
   if (!currentPerson) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-transparent">
+    <div className="fixed inset-0 overflow-y-auto bg-transparent">
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow w-32 opacity-40 top-[15%] mix-blend-screen" />
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-24 opacity-30 top-[35%] mix-blend-screen" />
@@ -3278,103 +3307,127 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center" style={{ paddingTop: 'calc(60px + 1rem + env(safe-area-inset-top))', paddingBottom: 'calc(60px + 1rem + env(safe-area-inset-bottom))' }}>
-        <div
-          key={resultPage}
-          className="w-full flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
-          style={{ maxHeight: 'calc(100vh - 60px - 1rem - env(safe-area-inset-top) - 60px - 1rem - env(safe-area-inset-bottom))' }}
-        >
-          {/* ヘッダー: 〇〇の取り扱い説明書 */}
-          <div className="shrink-0 p-5 pb-3">
-            <div className="flex items-center gap-2 mb-1">
-              <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
-              <h2 className="text-lg font-bold text-gray-800">{currentPerson.name}の取り扱い説明書</h2>
-            </div>
-            {apiError && (
-              <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
-                <Info size={16} className="text-amber-600 shrink-0" />
-                <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
-              </div>
-            )}
+      <div className="relative z-10 w-full max-w-md mx-auto px-4" style={{ paddingTop: 'max(calc(60px + 1rem), calc(60px + env(safe-area-inset-top)))', paddingBottom: 'calc(120px + 2rem + env(safe-area-inset-bottom))' }}>
+        {/* 上側のページめくりボタン */}
+        <div className="flex justify-center items-center mb-4">
+          <button
+            disabled={resultPage === 1}
+            onClick={() => setResultPage(p => p - 1)}
+            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="前のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <div className="flex gap-2 mx-4">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+              <div
+                key={num}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${resultPage === num ? 'bg-[var(--blue-500)] w-6' : 'bg-[var(--blue-500-30)]'}`}
+              />
+            ))}
           </div>
+          <button
+            disabled={resultPage === totalPages}
+            onClick={() => setResultPage(p => p + 1)}
+            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="次のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        </div>
 
-          {/* 本文（スクロール可能） */}
-          <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-4 space-y-4">
-            <section>
-              <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
-                <span className="text-lg">{currentPerson.strengths.emoji || '📝'}</span>
-                得意なこと
-              </h4>
-              <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
-                  {currentPerson.strengths.emoji ? `${currentPerson.strengths.emoji} ` : ''}{currentPerson.strengths.title}
-                </h4>
-                <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.strengths.desc}</p>
-              </div>
-            </section>
-            <section>
-              <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
-                <span className="text-lg">{currentPerson.weaknesses.emoji || '🌀'}</span>
-                苦手なこと
-              </h4>
-              <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
-                  {currentPerson.weaknesses.emoji ? `${currentPerson.weaknesses.emoji} ` : ''}{currentPerson.weaknesses.title}
-                </h4>
-                <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.weaknesses.desc}</p>
-              </div>
-            </section>
-            <section>
-              <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
-                <span className="text-lg">{currentPerson.praise.emoji || '🌟'}</span>
-                嬉しい頼まれごと・褒められ方
-              </h4>
-              <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
-                  {currentPerson.praise.emoji ? `${currentPerson.praise.emoji} ` : ''}{currentPerson.praise.title}
-                </h4>
-                <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.praise.desc}</p>
-              </div>
-            </section>
-            <section>
-              <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
-                <span className="text-lg">{currentPerson.feedback.emoji || '🎯'}</span>
-                好ましいフィードバックの仕方
-              </h4>
-              <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
-                  {currentPerson.feedback.emoji ? `${currentPerson.feedback.emoji} ` : ''}{currentPerson.feedback.title}
-                </h4>
-                <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.feedback.desc}</p>
-              </div>
-            </section>
+        {/* ヘッダー: 〇〇の取り扱い説明書 */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
+            <h2 className="text-lg font-bold text-gray-800">{currentPerson.name}の取り扱い説明書</h2>
           </div>
-
-          {/* ページネーション */}
-          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center">
-            <button
-              disabled={resultPage === 1}
-              onClick={() => setResultPage(p => p - 1)}
-              className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-white/80'}`}
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
-                <div
-                  key={num}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${resultPage === num ? 'bg-[var(--blue-500)] w-6' : 'bg-[var(--blue-500-30)]'}`}
-                />
-              ))}
+          {apiError && (
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
+              <Info size={16} className="text-amber-600 shrink-0" />
+              <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
             </div>
-            <button
-              disabled={resultPage === totalPages}
-              onClick={() => setResultPage(p => p + 1)}
-              className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-white/80'}`}
-            >
-              <ChevronLeft size={24} />
-            </button>
+          )}
+        </div>
+
+        {/* 本文 */}
+        <div className="space-y-4">
+          <section>
+            <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
+              <span className="text-lg">{currentPerson.strengths.emoji || '📝'}</span>
+              得意なこと
+            </h4>
+            <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
+                {currentPerson.strengths.emoji ? `${currentPerson.strengths.emoji} ` : ''}{currentPerson.strengths.title}
+              </h4>
+              <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.strengths.desc}</p>
+            </div>
+          </section>
+          <section>
+            <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
+              <span className="text-lg">{currentPerson.weaknesses.emoji || '🌀'}</span>
+              苦手なこと
+            </h4>
+            <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
+                {currentPerson.weaknesses.emoji ? `${currentPerson.weaknesses.emoji} ` : ''}{currentPerson.weaknesses.title}
+              </h4>
+              <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.weaknesses.desc}</p>
+            </div>
+          </section>
+          <section>
+            <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
+              <span className="text-lg">{currentPerson.praise.emoji || '🌟'}</span>
+              嬉しい頼まれごと・褒められ方
+            </h4>
+            <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
+                {currentPerson.praise.emoji ? `${currentPerson.praise.emoji} ` : ''}{currentPerson.praise.title}
+              </h4>
+              <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.praise.desc}</p>
+            </div>
+          </section>
+          <section>
+            <h4 className="font-bold text-[#3986BB] text-sm mb-1 flex items-center gap-2">
+              <span className="text-lg">{currentPerson.feedback.emoji || '🎯'}</span>
+              好ましいフィードバックの仕方
+            </h4>
+            <div className="bg-white rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[var(--black-dark)] text-sm mb-0.5">
+                {currentPerson.feedback.emoji ? `${currentPerson.feedback.emoji} ` : ''}{currentPerson.feedback.title}
+              </h4>
+              <p className="text-xs text-[var(--black-mid)] leading-relaxed">{currentPerson.feedback.desc}</p>
+            </div>
+          </section>
+        </div>
+
+        {/* 下側のページめくりボタン */}
+        <div className="flex justify-center items-center mt-6">
+          <button
+            disabled={resultPage === 1}
+            onClick={() => setResultPage(p => p - 1)}
+            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="前のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <div className="flex gap-2 mx-4">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+              <div
+                key={num}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${resultPage === num ? 'bg-[var(--blue-500)] w-6' : 'bg-[var(--blue-500-30)]'}`}
+              />
+            ))}
           </div>
+          <button
+            disabled={resultPage === totalPages}
+            onClick={() => setResultPage(p => p + 1)}
+            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="次のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
         </div>
       </div>
     </div>
@@ -3472,7 +3525,7 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
   if (!currentPerson) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-transparent">
+    <div className="fixed inset-0 overflow-y-auto bg-transparent">
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow w-32 opacity-40 top-[15%] mix-blend-screen" />
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-24 opacity-30 top-[35%] mix-blend-screen" />
@@ -3481,85 +3534,112 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center" style={{ paddingTop: 'calc(60px + 1rem + env(safe-area-inset-top))', paddingBottom: 'calc(60px + 1rem + env(safe-area-inset-bottom))' }}>
-        <div
-          key={resultPage}
-          className="w-full flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
-          style={{ maxHeight: 'calc(100vh - 60px - 1rem - env(safe-area-inset-top) - 60px - 1rem - env(safe-area-inset-bottom))' }}
-        >
-          <div className="shrink-0 p-5 pb-3">
-            <div className="flex items-center gap-2 mb-1">
-              <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
-              <h2 className="text-lg font-bold text-gray-800">{currentPerson.name}の5年後の未来</h2>
-            </div>
-            {apiError && (
-              <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
-                <Info size={16} className="text-amber-600 shrink-0" />
-                <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
-              </div>
-            )}
+      <div className="relative z-10 w-full max-w-md mx-auto px-4" style={{ paddingTop: 'max(calc(60px + 1rem), calc(60px + env(safe-area-inset-top)))', paddingBottom: 'calc(120px + 2rem + env(safe-area-inset-bottom))' }}>
+        {/* 上側のページめくりボタン */}
+        <div className="flex justify-center items-center mb-4">
+          <button
+            disabled={resultPage === 1}
+            onClick={() => setResultPage(p => p - 1)}
+            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="前のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <div className="flex gap-2 mx-4">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+              <div
+                key={num}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${resultPage === num ? 'bg-[var(--blue-500)] w-6' : 'bg-[var(--blue-500-30)]'}`}
+              />
+            ))}
           </div>
+          <button
+            disabled={resultPage === totalPages}
+            onClick={() => setResultPage(p => p + 1)}
+            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="次のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        </div>
 
-          <div className="flex-1 overflow-y-auto px-5 pb-4 space-y-4">
-            {/* 光の未来＝FFFEDF 100% */}
-            <section>
-              <h4 className="font-bold text-[#134E78] text-sm mb-1 flex items-center gap-2">
-                <span className="text-lg" aria-hidden>✨</span>
-                光の未来
-              </h4>
-              <div className="bg-[#FFFEDF] rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[#444444] text-sm mb-1">{currentPerson.lightFuture?.title}</h4>
-                <p className="text-xs text-[#666666] leading-relaxed">{currentPerson.lightFuture?.desc}</p>
-              </div>
-            </section>
-            {/* 現実の未来＝白 100% */}
-            <section>
-              <h4 className="font-bold text-[#134E78] text-sm mb-1 flex items-center gap-2">
-                <span className="text-lg" aria-hidden>🌱</span>
-                現実の未来
-              </h4>
-              <div className="bg-[#FFFFFF] rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[#444444] text-sm mb-1">{currentPerson.realisticFuture?.title}</h4>
-                <p className="text-xs text-[#666666] leading-relaxed">{currentPerson.realisticFuture?.desc}</p>
-              </div>
-            </section>
-            {/* 闇の未来＝青 134E78 60%・文字白 */}
-            <section>
-              <h4 className="font-bold text-[#134E78] text-sm mb-1 flex items-center gap-2">
-                <span className="text-lg" aria-hidden>🌪️</span>
-                闇の未来
-              </h4>
-              <div className="bg-[#D4EDFF] rounded-[28px] shadow-lg overflow-hidden p-4">
-                <h4 className="font-bold text-[#444444] text-sm mb-1">{currentPerson.darkFuture?.title}</h4>
-                <p className="text-xs text-[#666666] leading-relaxed">{currentPerson.darkFuture?.desc}</p>
-              </div>
-            </section>
+        {/* ヘッダー: 〇〇の5年後の未来 */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FileText size={22} className="text-[var(--blue-500)] shrink-0" />
+            <h2 className="text-lg font-bold text-gray-800">{currentPerson.name}の5年後の未来</h2>
           </div>
-
-          <div className="shrink-0 p-3 bg-white/50 border-t border-[var(--blue-500-30)] flex justify-between items-center">
-            <button
-              disabled={resultPage === 1}
-              onClick={() => setResultPage(p => p - 1)}
-              className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-white/80'}`}
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
-                <div
-                  key={num}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${resultPage === num ? 'bg-[var(--blue-500)] w-6' : 'bg-[var(--blue-500-30)]'}`}
-                />
-              ))}
+          {apiError && (
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2">
+              <Info size={16} className="text-amber-600 shrink-0" />
+              <p className="text-xs text-amber-800">{apiError}（例の結果を表示しています）</p>
             </div>
-            <button
-              disabled={resultPage === totalPages}
-              onClick={() => setResultPage(p => p + 1)}
-              className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-white/80'}`}
-            >
-              <ChevronLeft size={24} />
-            </button>
+          )}
+        </div>
+
+        {/* 本文 */}
+        <div className="space-y-4">
+          {/* 光の未来＝FFFEDF 100% */}
+          <section>
+            <h4 className="font-bold text-[#134E78] text-sm mb-1 flex items-center gap-2">
+              <span className="text-lg" aria-hidden>✨</span>
+              光の未来
+            </h4>
+            <div className="bg-[#FFFEDF] rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[#444444] text-sm mb-1">{currentPerson.lightFuture?.title}</h4>
+              <p className="text-xs text-[#666666] leading-relaxed">{currentPerson.lightFuture?.desc}</p>
+            </div>
+          </section>
+          {/* 現実の未来＝白 100% */}
+          <section>
+            <h4 className="font-bold text-[#134E78] text-sm mb-1 flex items-center gap-2">
+              <span className="text-lg" aria-hidden>🌱</span>
+              現実の未来
+            </h4>
+            <div className="bg-[#FFFFFF] rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[#444444] text-sm mb-1">{currentPerson.realisticFuture?.title}</h4>
+              <p className="text-xs text-[#666666] leading-relaxed">{currentPerson.realisticFuture?.desc}</p>
+            </div>
+          </section>
+          {/* 闇の未来＝青 134E78 60%・文字白 */}
+          <section>
+            <h4 className="font-bold text-[#134E78] text-sm mb-1 flex items-center gap-2">
+              <span className="text-lg" aria-hidden>🌪️</span>
+              闇の未来
+            </h4>
+            <div className="bg-[#D4EDFF] rounded-[28px] shadow-lg overflow-hidden p-4">
+              <h4 className="font-bold text-[#444444] text-sm mb-1">{currentPerson.darkFuture?.title}</h4>
+              <p className="text-xs text-[#666666] leading-relaxed">{currentPerson.darkFuture?.desc}</p>
+            </div>
+          </section>
+        </div>
+
+        {/* 下側のページめくりボタン */}
+        <div className="flex justify-center items-center mt-6">
+          <button
+            disabled={resultPage === 1}
+            onClick={() => setResultPage(p => p - 1)}
+            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="前のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <div className="flex gap-2 mx-4">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+              <div
+                key={num}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${resultPage === num ? 'bg-[var(--blue-500)] w-6' : 'bg-[var(--blue-500-30)]'}`}
+              />
+            ))}
           </div>
+          <button
+            disabled={resultPage === totalPages}
+            onClick={() => setResultPage(p => p + 1)}
+            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            aria-label="次のページ"
+          >
+            <ChevronLeft size={24} />
+          </button>
         </div>
       </div>
     </div>
@@ -3775,6 +3855,7 @@ const App = () => {
   const [respondentOrder, setRespondentOrder] = useState([]);
   const [resultsData, setResultsData] = useState(DEFAULT_RESULTS);
   const [finderApiError, setFinderApiError] = useState(null); // 共通点発見レーダーAI失敗時
+  const [questionLevel, setQuestionLevel] = useState(1); // 質問レベル（おかわりボタンを押すたびに増加）
   const [showRuleModal, setShowRuleModal] = useState(false);
   const [showRuleHint, setShowRuleHint] = useState(false);
   const [ruleHintFading, setRuleHintFading] = useState(false);
@@ -3917,7 +3998,7 @@ const App = () => {
 
     try {
       setAnalysisStatus('AIが会話を分析中...');
-      const aiResults = await analyzeWithGemini(activeParticipants);
+      const aiResults = await analyzeWithGemini(activeParticipants, questionLevel);
       setResultsData(aiResults);
       setFinderApiError(null);
       // 履歴を保存
@@ -3948,6 +4029,7 @@ const App = () => {
 
   const handleReload = () => {
     setResultPage(1);
+    setQuestionLevel(prev => prev + 1); // レベルを増やす
     startAnalysis();
   };
 
@@ -4270,7 +4352,7 @@ const App = () => {
         {screen === 'analyzing' && isFinderFlow && <AnalyzingScreen analysisStatus={analysisStatus} analysisProgress={analysisProgress} icebreakQ={icebreakQ} firstRespondent={firstRespondent} />}
         {screen === 'analyzing' && isTorisetsuFlow && <TorisetsuAnalyzingScreen analysisStatus={torisetsuAnalysisStatus} analysisProgress={torisetsuAnalysisProgress} />}
         {screen === 'torisetsuResults' && isTorisetsuFlow && <TorisetsuResultsScreen resultPage={torisetsuResultPage} setResultPage={setTorisetsuResultPage} resultsData={torisetsuResultsData} totalPages={torisetsuResultsData.length} apiError={torisetsuApiError} />}
-        {screen === 'results' && isFinderFlow && <ResultsScreen resultPage={resultPage} setResultPage={setResultPage} respondentOrder={respondentOrder} handleReload={handleReload} resultsData={resultsData} apiError={finderApiError} />}
+        {screen === 'results' && isFinderFlow && <ResultsScreen resultPage={resultPage} setResultPage={setResultPage} respondentOrder={respondentOrder} handleReload={handleReload} resultsData={resultsData} apiError={finderApiError} questionLevel={questionLevel} />}
         
         {/* トリセツメーカーのフロー */}
         {screen === 'input' && isTorisetsuFlow && <TorisetsuInputScreen 
