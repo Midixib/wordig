@@ -3278,11 +3278,11 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center py-4">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center" style={{ paddingTop: 'calc(60px + 1rem + env(safe-area-inset-top))', paddingBottom: 'calc(60px + 1rem + env(safe-area-inset-bottom))' }}>
         <div
           key={resultPage}
           className="w-full flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
-          style={{ maxHeight: 'calc(90vh - 2rem)' }}
+          style={{ maxHeight: 'calc(100vh - 60px - 1rem - env(safe-area-inset-top) - 60px - 1rem - env(safe-area-inset-bottom))' }}
         >
           {/* ヘッダー: 〇〇の取り扱い説明書 */}
           <div className="shrink-0 p-5 pb-3">
@@ -3481,10 +3481,11 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center py-4">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center" style={{ paddingTop: 'calc(60px + 1rem + env(safe-area-inset-top))', paddingBottom: 'calc(60px + 1rem + env(safe-area-inset-bottom))' }}>
         <div
           key={resultPage}
           className="w-full flex flex-col bg-[var(--blue-50)] rounded-[28px] shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-8 duration-500"
+          style={{ maxHeight: 'calc(100vh - 60px - 1rem - env(safe-area-inset-top) - 60px - 1rem - env(safe-area-inset-bottom))' }}
         >
           <div className="shrink-0 p-5 pb-3">
             <div className="flex items-center gap-2 mb-1">
