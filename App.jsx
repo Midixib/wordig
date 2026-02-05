@@ -3255,7 +3255,7 @@ const ResultsScreen = ({ resultPage, setResultPage, respondentOrder, handleReloa
             <button
               disabled={resultPage === 1}
               onClick={() => setResultPage(p => p - 1)}
-              className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-white/80'}`}
+              className={`p-2 rounded-full transition-colors bg-white ${resultPage === 1 ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             >
               <ChevronLeft size={24} />
             </button>
@@ -3270,7 +3270,7 @@ const ResultsScreen = ({ resultPage, setResultPage, respondentOrder, handleReloa
             <button
               disabled={resultPage === 3}
               onClick={() => setResultPage(p => p + 1)}
-              className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === 3 ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-white/80'}`}
+              className={`p-2 rounded-full rotate-180 transition-colors bg-white ${resultPage === 3 ? 'text-gray-300' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             >
               <ChevronLeft size={24} />
             </button>
@@ -3313,7 +3313,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
           <button
             disabled={resultPage === 1}
             onClick={() => setResultPage(p => p - 1)}
-            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full transition-colors bg-white ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="前のページ"
           >
             <ChevronLeft size={24} />
@@ -3329,7 +3329,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
           <button
             disabled={resultPage === totalPages}
             onClick={() => setResultPage(p => p + 1)}
-            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full rotate-180 transition-colors bg-white ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="次のページ"
           >
             <ChevronLeft size={24} />
@@ -3407,7 +3407,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
           <button
             disabled={resultPage === 1}
             onClick={() => setResultPage(p => p - 1)}
-            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full transition-colors bg-white ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="前のページ"
           >
             <ChevronLeft size={24} />
@@ -3423,7 +3423,7 @@ const TorisetsuResultsScreen = ({ resultPage, setResultPage, resultsData, totalP
           <button
             disabled={resultPage === totalPages}
             onClick={() => setResultPage(p => p + 1)}
-            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full rotate-180 transition-colors bg-white ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="次のページ"
           >
             <ChevronLeft size={24} />
@@ -3540,7 +3540,7 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
           <button
             disabled={resultPage === 1}
             onClick={() => setResultPage(p => p - 1)}
-            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full transition-colors bg-white ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="前のページ"
           >
             <ChevronLeft size={24} />
@@ -3556,7 +3556,7 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
           <button
             disabled={resultPage === totalPages}
             onClick={() => setResultPage(p => p + 1)}
-            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full rotate-180 transition-colors bg-white ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="次のページ"
           >
             <ChevronLeft size={24} />
@@ -3619,7 +3619,7 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
           <button
             disabled={resultPage === 1}
             onClick={() => setResultPage(p => p - 1)}
-            className={`p-2 rounded-full transition-colors ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full transition-colors bg-white ${resultPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="前のページ"
           >
             <ChevronLeft size={24} />
@@ -3635,7 +3635,7 @@ const FutureResultsScreen = ({ resultPage, setResultPage, resultsData, totalPage
           <button
             disabled={resultPage === totalPages}
             onClick={() => setResultPage(p => p + 1)}
-            className={`p-2 rounded-full rotate-180 transition-colors ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-white/80 bg-white/50 shadow-lg'}`}
+            className={`p-2 rounded-full rotate-180 transition-colors bg-white ${resultPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-[var(--blue-500)] hover:bg-gray-50'}`}
             aria-label="次のページ"
           >
             <ChevronLeft size={24} />
