@@ -2740,7 +2740,7 @@ const ArchiveAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 h-[90vh] py-6">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 py-6" style={{ paddingTop: 'max(5rem, calc(4rem + env(safe-area-inset-top)))', paddingBottom: 'max(6rem, calc(5rem + env(safe-area-inset-bottom)))' }}>
         <div className="w-full max-w-md shrink-0">
           <p className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
             {analysisProgress < 100 && <Loader2 size={16} className="animate-spin text-[var(--blue-500)]" />}
@@ -2755,7 +2755,7 @@ const ArchiveAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
           <p className="text-right mt-1 text-xs text-[var(--blue-500)] font-mono">{analysisProgress}%</p>
         </div>
 
-        <div className="w-full flex-1 min-h-0 flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
+        <div className="w-full flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
           <img
             src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`}
             alt=""
@@ -2870,7 +2870,7 @@ const TimelineAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 h-[90vh] py-6">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 py-6" style={{ paddingTop: 'max(5rem, calc(4rem + env(safe-area-inset-top)))', paddingBottom: 'max(6rem, calc(5rem + env(safe-area-inset-bottom)))' }}>
         <div className="w-full max-w-md shrink-0">
           <p className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
             {analysisProgress < 100 && <Loader2 size={16} className="animate-spin text-[var(--blue-500)]" />}
@@ -2885,7 +2885,7 @@ const TimelineAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
           <p className="text-right mt-1 text-xs text-[var(--blue-500)] font-mono">{analysisProgress}%</p>
         </div>
 
-        <div className="w-full flex-1 min-h-0 flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
+        <div className="w-full flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
           <img
             src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`}
             alt=""
@@ -3418,7 +3418,7 @@ const FutureAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
         <img src={`${import.meta.env.BASE_URL}cloud.png`} alt="" className="absolute cloud-flow-2 w-36 opacity-30 top-[25%] mix-blend-screen" style={{ animationDelay: '-15s' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 h-[90vh] py-6">
+      <div className="relative z-10 w-full max-w-md mx-4 flex flex-col items-center gap-4 py-6" style={{ paddingTop: 'max(5rem, calc(4rem + env(safe-area-inset-top)))', paddingBottom: 'max(6rem, calc(5rem + env(safe-area-inset-bottom)))' }}>
         <div className="w-full max-w-md shrink-0">
           <p className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
             {analysisProgress < 100 && <Loader2 size={16} className="animate-spin text-[var(--blue-500)]" />}
@@ -3433,7 +3433,7 @@ const FutureAnalyzingScreen = ({ analysisStatus, analysisProgress }) => {
           <p className="text-right mt-1 text-xs text-[var(--blue-500)] font-mono">{analysisProgress}%</p>
         </div>
 
-        <div className="w-full flex-1 min-h-0 flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
+        <div className="w-full flex flex-col items-center justify-center bg-[var(--blue-50)]/80 rounded-[28px] overflow-visible relative">
           <img
             src={`${import.meta.env.BASE_URL}kumogura-shippo.gif`}
             alt=""
